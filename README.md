@@ -1,6 +1,6 @@
-# 🎈 Karma Play
+# Karma Play
 
-A free, offline balloon-popping game for toddlers (ages ~2–5). Tap the balloons
+A free, offline balloon-popping game for toddlers (ages ~2-5). Tap the balloons
 to pop them, hear fun sounds, and level up. Each balloon shows a letter, number,
 shape, or animal, so kids meet the alphabet and counting while they play.
 
@@ -8,7 +8,7 @@ shape, or animal, so kids meet the alphabet and counting while they play.
 
 ## Play it
 
-Open `index.html` in any browser. That's the whole game — one file, no install.
+Open `index.html` in any browser. That is the whole game - one file, no install.
 On a phone, use "Add to Home Screen" to run it fullscreen like an app.
 
 ## Features
@@ -16,7 +16,7 @@ On a phone, use "Add to Home Screen" to run it fullscreen like an app.
 - Five worlds: Dino, Cars, Ocean, Robot, and Fantasy
 - Letters, numbers, shapes, and animals that unlock as you level up
 - Glossy balloons, confetti, streaks, combos, and gold balloons
-- All sound is generated in the browser — no audio files
+- All sound is generated in the browser - no audio files
 - No failure states, no pressure, just popping
 
 ## Privacy
@@ -26,7 +26,11 @@ a play count and your music on/off setting, stored on your own device.
 
 ## License
 
-[MIT](LICENSE) — free to use and modify, just keep the copyright notice.
+Proprietary. See [LICENSE](LICENSE).
+
+This repository is public so people can view and learn from the work. That does
+**not** grant permission to copy, redistribute, deploy, host, sell, or use it
+commercially. All rights reserved unless you have written permission from the author.
 
 Made by Franco Bernal · [francobernal.ca](https://francobernal.ca)
 
