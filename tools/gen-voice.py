@@ -2,7 +2,9 @@
 """Generate natural female neural voice pack for Karma Play.
 
 Uses Microsoft Edge Online Natural (same family as Karma Race's Andrew pack).
-Female default: en-US-AvaNeural — warmer, more human than Aria, never OS/browser TTS.
+Female default: en-US-MichelleNeural — warm adult natural female.
+(Ava/Emma currently truncate on this pipeline; do not use until verified.)
+Never use OS/browser TTS (Zira etc).
 """
 import argparse
 import asyncio
@@ -10,8 +12,8 @@ import json
 import pathlib
 import edge_tts
 
-# Premium natural female (peer quality class to Andrew Online Natural).
-VOICE = "en-US-AvaNeural"
+# Premium natural female (Edge Online Natural family; peer of Andrew for Karma Race).
+VOICE = "en-US-MichelleNeural"
 OUT = pathlib.Path(__file__).resolve().parent.parent / "voice"
 OUT.mkdir(exist_ok=True)
 
@@ -85,7 +87,8 @@ async def one(key: str, text: str, force: bool):
 async def main(force: bool = False):
     words = build_words()
     print(f"generating {len(words)} clips with {VOICE} force={force}")
-    sem = asyncio.Semaphore(3)
+    # Keep concurrency low so Edge TTS does not truncate clips
+    sem = asyncio.Semaphore(2)
 
     async def run(k, t):
         async with sem:
@@ -104,7 +107,7 @@ async def main(force: bool = False):
         raise SystemExit(f"voice generation failed for {len(err)} clips")
     manifest = {
         "voice": VOICE,
-        "family": "Microsoft Edge Online Natural (female Ava; peer of Andrew used in Karma Race)",
+        "family": "Microsoft Edge Online Natural (female Michelle; peer of Andrew used in Karma Race)",
         "rate": "-5%",
         "count": len(words),
         "keys": sorted(words.keys()),

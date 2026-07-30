@@ -21,7 +21,7 @@ for a fullscreen app-like experience (PWA).
 - Glossy balloons, confetti, streaks, combos, gold stars
 - Power balloons: rainbow, slow-mo, mega chain
 - Gentle missions (letters, numbers, animals, colors, shapes) with no fail states
-- Natural female voice pack (Microsoft Ava Online Natural; same Edge neural family as Karma Race Andrew, female)
+- Natural female voice pack (Microsoft Michelle Online Natural; same Edge neural family as Karma Race Andrew, female)
 - Color, count-chain, and find-it learning inside the pop loop
 - Adaptive quality so low-end tablets stay smooth
 - Layered generative music and satisfying synthesized SFX
