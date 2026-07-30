@@ -2,14 +2,15 @@
    No third-party URLs. No analytics. Offline-first for free play. */
 'use strict';
 
-const CACHE = 'karma-play-v2.0.0';
+const CACHE = 'karma-play-v2.1.0';
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './icon.svg',
   './og-card.jpg',
-  './robots.txt'
+  './robots.txt',
+  './voice/manifest.json'
 ];
 
 self.addEventListener('install', event => {

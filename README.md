@@ -14,13 +14,14 @@ show up as you play so learning stays inside the fun, not as homework UI.
 Or open `index.html` in any browser. On a phone or tablet, use **Add to Home Screen**
 for a fullscreen app-like experience (PWA).
 
-## Level 2 features
+## Level 2.1 features
 
-- Six worlds: Dino, Cars, Ocean, Robot, Space, Fantasy
+- Six equal world portals (Dino, Cars, Ocean, Robot, Space, Fantasy) with mini scenes
 - Glossy balloons, confetti, streaks, combos, gold stars
 - Power balloons: rainbow, slow-mo, mega chain
-- Gentle missions (never punish, never fail the child)
-- Optional soft voice for letters, numbers, and animals
+- Gentle missions (letters, numbers, animals, colors, shapes) with no fail states
+- Natural female voice pack (Microsoft Aria Online Natural, same Edge neural family as Andrew)
+- Color, count-chain, and find-it learning inside the pop loop
 - Adaptive quality so low-end tablets stay smooth
 - Layered generative music and satisfying synthesized SFX
 - Haptics when the device supports vibration
