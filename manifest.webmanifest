@@ -1,0 +1,21 @@
+{
+  "name": "Karma Play",
+  "short_name": "Karma Play",
+  "description": "Free offline balloon learning game for kids. No ads. No tracking.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#07071a",
+  "theme_color": "#07071a",
+  "lang": "en",
+  "categories": ["games", "education", "kids"],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

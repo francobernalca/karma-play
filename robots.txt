@@ -1,0 +1,5 @@
+# Public free game — crawl welcome. No private paths exist.
+User-agent: *
+Allow: /
+
+Sitemap:

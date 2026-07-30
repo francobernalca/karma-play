@@ -5,18 +5,31 @@ desktop.ini
 *~
 .vscode/
 .idea/
+*.bak
+*.bak-*
+index.html.bak*
 
 # Logs & temp
 *.log
 *.tmp
 .cache/
+.wrangler/
 
-# Dependencies (none required, kept for safety)
+# Dependencies (none required)
 node_modules/
+package-lock.json
 
-# Environment / secrets, never commit these
+# Environment / secrets — never commit
 .env
 .env.*
 *.pem
 *.key
+*.p12
 secrets.*
+credentials.*
+.npmrc
+
+# Local deploy / personal
+.cloudflare/
+wrangler.toml.local
+*.local
