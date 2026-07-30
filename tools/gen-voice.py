@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""Generate natural female neural voice pack for Karma Play.
+"""Generate happy, kid-game neural voice pack for Karma Play.
 
-Uses Microsoft Edge Online Natural (same family as Karma Race's Andrew pack).
-Female default: en-US-MichelleNeural — warm adult natural female.
-(Ava/Emma currently truncate on this pipeline; do not use until verified.)
+Same Microsoft Edge Online Natural family as Karma Race's Andrew pack,
+but female and tuned for energy (brighter pitch + slightly faster rate).
+Jenny is friendlier and more animated than flat "assistant" voices.
 Never use OS/browser TTS (Zira etc).
+
+Avoid Ava/Emma on this pipeline (truncated clips). Avoid Michelle for kids
+(reads call-center / corporate).
 """
 import argparse
 import asyncio
@@ -12,30 +15,35 @@ import json
 import pathlib
 import edge_tts
 
-# Premium natural female (Edge Online Natural family; peer of Andrew for Karma Race).
-VOICE = "en-US-MichelleNeural"
+# Happy, clear female (Edge Online Natural; peer family of Andrew).
+VOICE = "en-US-JennyNeural"
+# Andrew-like energy for kids: a bit faster + brighter (not slow call-center).
+RATE = "+12%"
+PITCH = "+10Hz"
+
 OUT = pathlib.Path(__file__).resolve().parent.parent / "voice"
 OUT.mkdir(exist_ok=True)
 
 NUM_WORDS = {
-    "1": "one", "2": "two", "3": "three", "4": "four", "5": "five",
-    "6": "six", "7": "seven", "8": "eight", "9": "nine", "10": "ten",
+    "1": "one!", "2": "two!", "3": "three!", "4": "four!", "5": "five!",
+    "6": "six!", "7": "seven!", "8": "eight!", "9": "nine!", "10": "ten!",
 }
 ANIMALS = {
-    "dog": "dog", "cat": "cat", "bunny": "bunny", "bear": "bear", "panda": "panda",
-    "lion": "lion", "tiger": "tiger", "cow": "cow", "pig": "pig", "monkey": "monkey",
-    "fox": "fox", "frog": "frog", "penguin": "penguin", "duck": "duck", "horse": "horse",
-    "chicken": "chicken", "giraffe": "giraffe", "elephant": "elephant", "zebra": "zebra",
-    "koala": "koala",
+    "dog": "dog!", "cat": "cat!", "bunny": "bunny!", "bear": "bear!", "panda": "panda!",
+    "lion": "lion!", "tiger": "tiger!", "cow": "cow!", "pig": "pig!", "monkey": "monkey!",
+    "fox": "fox!", "frog": "frog!", "penguin": "penguin!", "duck": "duck!", "horse": "horse!",
+    "chicken": "chicken!", "giraffe": "giraffe!", "elephant": "elephant!", "zebra": "zebra!",
+    "koala": "koala!",
 }
 SHAPES = {
-    "triangle": "triangle", "circle": "circle", "square": "square",
-    "diamond": "diamond", "star": "star", "heart": "heart",
+    "triangle": "triangle!", "circle": "circle!", "square": "square!",
+    "diamond": "diamond!", "star": "star!", "heart": "heart!",
 }
 COLORS = {
-    "red": "red", "blue": "blue", "green": "green",
-    "yellow": "yellow", "purple": "purple", "orange": "orange",
+    "red": "red!", "blue": "blue!", "green": "green!",
+    "yellow": "yellow!", "purple": "purple!", "orange": "orange!",
 }
+# Short, punchy celebration lines (keep length game-safe)
 PHRASES = {
     "wow": "Wow!",
     "yay": "Yay!",
@@ -59,8 +67,9 @@ PHRASES = {
 
 def build_words():
     words = {}
+    # Letter names with a light lift so they do not sound flat
     for ch in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-        words[f"L{ch}"] = ch
+        words[f"L{ch}"] = f"{ch}!"
     for k, v in NUM_WORDS.items():
         words[f"N{k}"] = v
     for k, v in ANIMALS.items():
@@ -78,26 +87,29 @@ async def one(key: str, text: str, force: bool):
     path = OUT / f"{key}.mp3"
     if not force and path.exists() and path.stat().st_size > 500:
         return key, "skip"
-    # Slightly slower for toddlers; leave pitch natural (pitch hacks sound synthetic)
-    c = edge_tts.Communicate(text, VOICE, rate="-5%")
+    c = edge_tts.Communicate(text, VOICE, rate=RATE, pitch=PITCH)
     await c.save(str(path))
-    return key, path.stat().st_size
+    size = path.stat().st_size
+    if size < 800:
+        raise RuntimeError(f"clip too small ({size} bytes)")
+    return key, size
 
 
 async def main(force: bool = False):
     words = build_words()
-    print(f"generating {len(words)} clips with {VOICE} force={force}")
-    # Keep concurrency low so Edge TTS does not truncate clips
-    sem = asyncio.Semaphore(2)
+    print(f"generating {len(words)} clips with {VOICE} rate={RATE} pitch={PITCH} force={force}")
+    # Serial generation: concurrent Edge calls often truncate energetic rate/pitch packs
+    results = []
+    for i, (k, t) in enumerate(words.items(), 1):
+        try:
+            r = await one(k, t, force)
+        except Exception as e:
+            r = (k, f"ERR {e}")
+        results.append(r)
+        if i % 15 == 0 or i == len(words):
+            print(f"  {i}/{len(words)} {r[0]}={r[1]}")
+        await asyncio.sleep(0.05)
 
-    async def run(k, t):
-        async with sem:
-            try:
-                return await one(k, t, force)
-            except Exception as e:
-                return k, f"ERR {e}"
-
-    results = await asyncio.gather(*[run(k, t) for k, t in words.items()])
     ok = sum(1 for _, r in results if isinstance(r, int) or r == "skip")
     err = [x for x in results if isinstance(x[1], str) and str(x[1]).startswith("ERR")]
     print("ok", ok, "err", len(err))
@@ -105,16 +117,26 @@ async def main(force: bool = False):
         print(e)
     if err:
         raise SystemExit(f"voice generation failed for {len(err)} clips")
+
+    sizes = [p.stat().st_size for p in OUT.glob("*.mp3")]
+    # Short energetic clips often share a minimum MP3 frame size; uniqueness matters more.
+    hashes = {p.read_bytes() for p in OUT.glob("*.mp3")}
+    if len(hashes) < len(words) * 0.9:
+        raise SystemExit(
+            f"voice pack looks duplicated ({len(hashes)} unique of {len(words)})"
+        )
+
     manifest = {
         "voice": VOICE,
-        "family": "Microsoft Edge Online Natural (female Michelle; peer of Andrew used in Karma Race)",
-        "rate": "-5%",
+        "family": "Microsoft Edge Online Natural (female Jenny; happy kids tone; peer of Andrew)",
+        "rate": RATE,
+        "pitch": PITCH,
         "count": len(words),
         "keys": sorted(words.keys()),
     }
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    total = sum(p.stat().st_size for p in OUT.glob("*.mp3"))
-    print("total_mb", round(total / 1024 / 1024, 2))
+    total = sum(sizes)
+    print("unique_sizes", len(set(sizes)), "total_mb", round(total / 1024 / 1024, 2))
 
 
 if __name__ == "__main__":

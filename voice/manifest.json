@@ -1,7 +1,8 @@
 {
-  "voice": "en-US-MichelleNeural",
-  "family": "Microsoft Edge Online Natural (female Michelle; peer of Andrew used in Karma Race)",
-  "rate": "-5%",
+  "voice": "en-US-JennyNeural",
+  "family": "Microsoft Edge Online Natural (female Jenny; happy kids tone; peer of Andrew)",
+  "rate": "+12%",
+  "pitch": "+10Hz",
   "count": 85,
   "keys": [
     "Abear",

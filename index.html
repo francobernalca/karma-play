@@ -766,9 +766,9 @@ body.q-low .hBtn,body.q-low .hPill,body.q-low #wPlay,body.q-low .btnBack{
    No ads. No tracking. No network for gameplay.
    All progress stays on this device.
 ════════════════════════════════════════════════════ */
-const VERSION = '2.2.2';
+const VERSION = '2.2.3';
 // Bump when re-rendering the neural voice pack so clients skip stale HTTP cache
-const VOICE_PACK = 'michelle1';
+const VOICE_PACK = 'jenny-happy1';
 const STORE_KEY = 'kvg_os3';
 
 // ── THEMES ─────────────────────────────────────────
@@ -875,7 +875,7 @@ let mission = null, tutMode = false;
 let lastSay = 0, lastFrame = 0, fpsEMA = 60, fpsSamples = 0;
 let lastNumPop = 0, countChain = 0;
 const PAR_MAX_BASE = 52;
-const voiceBufs = new Map();   // decoded AudioBuffers (neural Michelle)
+const voiceBufs = new Map();   // decoded AudioBuffers (neural Jenny happy pack)
 const voiceHtml = new Map();   // HTMLAudioElement fallback pool
 let voiceSource = null;        // active BufferSourceNode
 let activeVoiceEl = null;
@@ -1153,8 +1153,8 @@ function toggleMusic() {
   save();
 }
 
-// ── Voice — pre-rendered Microsoft Michelle Online Natural (Edge neural, female)
-// Same family as Karma Race's Andrew Online Natural. NEVER browser TTS (Zira etc).
+// ── Voice — pre-rendered Microsoft Jenny Online Natural (Edge neural, female)
+// Happy kids energy (brighter + faster pack). Peer family of Race's Andrew. Never OS TTS.
 function getVoiceBase() {
   if (voiceBase) return voiceBase;
   // Resolve game root correctly for:
@@ -1274,7 +1274,7 @@ function playVoiceHtml(key) {
   } catch (e) { return false; }
 }
 
-// Primary: Web Audio decode of Michelle neural MP3. Never falls back to robotic TTS.
+// Primary: Web Audio decode of Jenny neural MP3. Never falls back to robotic TTS.
 function playVoiceFile(key) {
   if (!key || !speechOn) return false;
   initAudio();
@@ -1286,7 +1286,7 @@ function playVoiceFile(key) {
   loadVoiceBuffer(key).then(buf => {
     if (speechOn) playDecodedBuffer(buf);
   }).catch(() => {
-    // HTMLAudio only if decode/fetch fails — still Michelle file, never OS TTS
+    // HTMLAudio only if decode/fetch fails — still Jenny file, never OS TTS
     playVoiceHtml(key);
   });
   return true;
@@ -1679,7 +1679,7 @@ function startGame(t) {
   slowUntil=0; findTarget=null; findUntil=0; lastFrame=0; fpsSamples=0; fpsEMA=60;
   lastNumPop=0; countChain=0;
   quality = 2; applyQuality();
-  // world entrance — natural Michelle voice
+  // world entrance — happy Jenny voice
   setTimeout(() => {
     if (playVoiceFile('P' + t)) return;
     sayPhrase('letsplay');
