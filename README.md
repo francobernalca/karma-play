@@ -16,7 +16,7 @@ for a fullscreen app-like experience (PWA).
 
 ## Level 2.2 features
 
-- Cinematic intro video (mobile, tablet, desktop) before the kids PLAY screen
+- Silent autoplay intro video, then main PLAY screen (mobile, tablet, desktop)
 - Six equal world portals (Dino, Cars, Ocean, Robot, Space, Fantasy) with mini scenes
 - Glossy balloons, confetti, streaks, combos, gold stars
 - Power balloons: rainbow, slow-mo, mega chain

@@ -2,7 +2,7 @@
    No third-party URLs. No analytics. Offline-first for free play. */
 'use strict';
 
-const CACHE = 'karma-play-v2.2.0';
+const CACHE = 'karma-play-v2.2.1';
 const ASSETS = [
   './',
   './index.html',
