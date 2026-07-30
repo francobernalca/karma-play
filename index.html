@@ -766,7 +766,9 @@ body.q-low .hBtn,body.q-low .hPill,body.q-low #wPlay,body.q-low .btnBack{
    No ads. No tracking. No network for gameplay.
    All progress stays on this device.
 ════════════════════════════════════════════════════ */
-const VERSION = '2.2.1';
+const VERSION = '2.2.2';
+// Bump when re-rendering the neural voice pack so clients skip stale HTTP cache
+const VOICE_PACK = 'ava1';
 const STORE_KEY = 'kvg_os3';
 
 // ── THEMES ─────────────────────────────────────────
@@ -873,7 +875,7 @@ let mission = null, tutMode = false;
 let lastSay = 0, lastFrame = 0, fpsEMA = 60, fpsSamples = 0;
 let lastNumPop = 0, countChain = 0;
 const PAR_MAX_BASE = 52;
-const voiceBufs = new Map();   // decoded AudioBuffers (neural Aria)
+const voiceBufs = new Map();   // decoded AudioBuffers (neural Ava)
 const voiceHtml = new Map();   // HTMLAudioElement fallback pool
 let voiceSource = null;        // active BufferSourceNode
 let activeVoiceEl = null;
@@ -1151,8 +1153,8 @@ function toggleMusic() {
   save();
 }
 
-// ── Voice — pre-rendered Microsoft Aria Online Natural (Edge neural)
-// Same family as Andrew Online Natural. NEVER use robotic browser TTS (Zira etc).
+// ── Voice — pre-rendered Microsoft Ava Online Natural (Edge neural, female)
+// Same family as Karma Race's Andrew Online Natural. NEVER browser TTS (Zira etc).
 function getVoiceBase() {
   if (voiceBase) return voiceBase;
   // Resolve game root correctly for:
@@ -1173,7 +1175,7 @@ function getVoiceBase() {
 }
 
 function voiceUrl(key) {
-  return getVoiceBase() + key + '.mp3';
+  return getVoiceBase() + key + '.mp3?v=' + VOICE_PACK;
 }
 
 function voiceKeyFor(lbl) {
@@ -1236,7 +1238,7 @@ function loadVoiceBuffer(key) {
   initAudio();
   if (!ac) return Promise.reject(new Error('no-audio'));
   const url = voiceUrl(key);
-  return fetch(url, { cache: 'force-cache', credentials: 'same-origin' })
+  return fetch(url, { cache: 'default', credentials: 'same-origin' })
     .then(res => {
       if (!res.ok) throw new Error('voice-http-' + res.status);
       return res.arrayBuffer();
@@ -1272,7 +1274,7 @@ function playVoiceHtml(key) {
   } catch (e) { return false; }
 }
 
-// Primary: Web Audio decode of Aria neural MP3. Never falls back to robotic TTS.
+// Primary: Web Audio decode of Ava neural MP3. Never falls back to robotic TTS.
 function playVoiceFile(key) {
   if (!key || !speechOn) return false;
   initAudio();
@@ -1284,7 +1286,7 @@ function playVoiceFile(key) {
   loadVoiceBuffer(key).then(buf => {
     if (speechOn) playDecodedBuffer(buf);
   }).catch(() => {
-    // HTMLAudio only if decode/fetch fails — still Aria file, never OS TTS
+    // HTMLAudio only if decode/fetch fails — still Ava file, never OS TTS
     playVoiceHtml(key);
   });
   return true;
@@ -1677,7 +1679,7 @@ function startGame(t) {
   slowUntil=0; findTarget=null; findUntil=0; lastFrame=0; fpsSamples=0; fpsEMA=60;
   lastNumPop=0; countChain=0;
   quality = 2; applyQuality();
-  // world entrance — natural Aria voice
+  // world entrance — natural Ava voice
   setTimeout(() => {
     if (playVoiceFile('P' + t)) return;
     sayPhrase('letsplay');

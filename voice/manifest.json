@@ -1,6 +1,7 @@
 {
-  "voice": "en-US-AriaNeural",
-  "family": "Microsoft Edge Online Natural (female Aria; peer of Andrew)",
+  "voice": "en-US-AvaNeural",
+  "family": "Microsoft Edge Online Natural (female Ava; peer of Andrew used in Karma Race)",
+  "rate": "-5%",
   "count": 85,
   "keys": [
     "Abear",

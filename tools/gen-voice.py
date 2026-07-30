@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
-"""Generate natural female neural voice pack (Edge Aria, same family as Andrew)."""
+"""Generate natural female neural voice pack for Karma Play.
+
+Uses Microsoft Edge Online Natural (same family as Karma Race's Andrew pack).
+Female default: en-US-AvaNeural — warmer, more human than Aria, never OS/browser TTS.
+"""
+import argparse
 import asyncio
 import json
 import pathlib
 import edge_tts
 
-VOICE = "en-US-AriaNeural"
+# Premium natural female (peer quality class to Andrew Online Natural).
+VOICE = "en-US-AvaNeural"
 OUT = pathlib.Path(__file__).resolve().parent.parent / "voice"
 OUT.mkdir(exist_ok=True)
 
@@ -66,25 +72,25 @@ def build_words():
     return words
 
 
-async def one(key: str, text: str):
+async def one(key: str, text: str, force: bool):
     path = OUT / f"{key}.mp3"
-    if path.exists() and path.stat().st_size > 500:
+    if not force and path.exists() and path.stat().st_size > 500:
         return key, "skip"
-    # Warm, slightly slower for toddlers (Aria Online Natural)
-    c = edge_tts.Communicate(text, VOICE, rate="-8%", pitch="+4Hz")
+    # Slightly slower for toddlers; leave pitch natural (pitch hacks sound synthetic)
+    c = edge_tts.Communicate(text, VOICE, rate="-5%")
     await c.save(str(path))
     return key, path.stat().st_size
 
 
-async def main():
+async def main(force: bool = False):
     words = build_words()
-    print(f"generating {len(words)} clips with {VOICE}")
-    sem = asyncio.Semaphore(4)
+    print(f"generating {len(words)} clips with {VOICE} force={force}")
+    sem = asyncio.Semaphore(3)
 
     async def run(k, t):
         async with sem:
             try:
-                return await one(k, t)
+                return await one(k, t, force)
             except Exception as e:
                 return k, f"ERR {e}"
 
@@ -94,9 +100,12 @@ async def main():
     print("ok", ok, "err", len(err))
     for e in err[:10]:
         print(e)
+    if err:
+        raise SystemExit(f"voice generation failed for {len(err)} clips")
     manifest = {
         "voice": VOICE,
-        "family": "Microsoft Edge Online Natural (female Aria; peer of Andrew)",
+        "family": "Microsoft Edge Online Natural (female Ava; peer of Andrew used in Karma Race)",
+        "rate": "-5%",
         "count": len(words),
         "keys": sorted(words.keys()),
     }
@@ -106,4 +115,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--force", action="store_true", help="Regenerate every clip even if present")
+    args = ap.parse_args()
+    asyncio.run(main(force=args.force))
