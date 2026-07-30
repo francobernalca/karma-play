@@ -722,7 +722,7 @@ body.q-low .hBtn,body.q-low .hPill,body.q-low #wPlay,body.q-low .btnBack{
    No ads. No tracking. No network for gameplay.
    All progress stays on this device.
 ════════════════════════════════════════════════════ */
-const VERSION = '2.1.0';
+const VERSION = '2.1.2';
 const STORE_KEY = 'kvg_os3';
 
 // ── THEMES ─────────────────────────────────────────
@@ -829,8 +829,12 @@ let mission = null, tutMode = false;
 let lastSay = 0, lastFrame = 0, fpsEMA = 60, fpsSamples = 0;
 let lastNumPop = 0, countChain = 0;
 const PAR_MAX_BASE = 52;
-const voicePool = new Map();
+const voiceBufs = new Map();   // decoded AudioBuffers (neural Aria)
+const voiceHtml = new Map();   // HTMLAudioElement fallback pool
+let voiceSource = null;        // active BufferSourceNode
 let activeVoiceEl = null;
+let voiceBase = null;
+let voiceReady = false;
 
 // ── PERSISTENCE (device only) ──────────────────────
 function save() {
@@ -1103,8 +1107,31 @@ function toggleMusic() {
   save();
 }
 
-// ── Voice — Aria Online Natural (Edge neural, female peer of Andrew)
-// Pre-rendered MP3 pack in /voice so every device sounds warm, not robotic.
+// ── Voice — pre-rendered Microsoft Aria Online Natural (Edge neural)
+// Same family as Andrew Online Natural. NEVER use robotic browser TTS (Zira etc).
+function getVoiceBase() {
+  if (voiceBase) return voiceBase;
+  // Resolve game root correctly for:
+  //   /karma-play/   /karma-play   /karma-play/index.html   file://.../index.html
+  try {
+    if (location.protocol === 'file:') {
+      voiceBase = new URL('voice/', location.href).href;
+    } else {
+      let path = location.pathname || '/';
+      if (path.endsWith('/index.html')) path = path.slice(0, -10);
+      else if (!path.endsWith('/')) path = path + '/';
+      voiceBase = location.origin + path + 'voice/';
+    }
+  } catch (e) {
+    voiceBase = 'voice/';
+  }
+  return voiceBase;
+}
+
+function voiceUrl(key) {
+  return getVoiceBase() + key + '.mp3';
+}
+
 function voiceKeyFor(lbl) {
   if (!lbl || lbl === '⭐') return null;
   if (lbl === '🌈' || lbl === '❄️' || lbl === '💥') return null;
@@ -1121,101 +1148,147 @@ function voiceKeyFor(lbl) {
 function phraseKey(id) { return id ? 'P' + id : null; }
 
 function stopVoice() {
+  if (voiceSource) {
+    try { voiceSource.stop(0); } catch (e) {}
+    try { voiceSource.disconnect(); } catch (e) {}
+    voiceSource = null;
+  }
   if (activeVoiceEl) {
     try { activeVoiceEl.pause(); activeVoiceEl.currentTime = 0; } catch (e) {}
     activeVoiceEl = null;
   }
+  // Kill any accidental browser TTS so kids never hear robotic Zira mid-clip
   try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
 }
 
-function playVoiceFile(key) {
-  if (!key || !speechOn) return false;
+function voiceOutNode() {
+  // Prefer dedicated path through master (same unlock as SFX after user tap)
+  return sfxBus || masterGain || (ac ? ac.destination : null);
+}
+
+function playDecodedBuffer(buf) {
+  if (!ac || !buf) return false;
+  const out = voiceOutNode();
+  if (!out) return false;
+  stopVoice();
   try {
-    let a = voicePool.get(key);
-    if (!a) {
-      a = new Audio('voice/' + key + '.mp3');
-      a.preload = 'auto';
-      voicePool.set(key, a);
-    }
-    stopVoice();
-    a.volume = 0.92;
-    a.currentTime = 0;
-    activeVoiceEl = a;
-    const p = a.play();
-    if (p && p.catch) p.catch(() => { activeVoiceEl = null; });
+    if (ac.state === 'suspended') ac.resume().catch(()=>{});
+    const src = ac.createBufferSource();
+    const g = ac.createGain();
+    // Slightly hot so neural speech cuts through music without distortion
+    g.gain.value = 1.15;
+    src.buffer = buf;
+    src.connect(g);
+    g.connect(out);
+    src.onended = () => { if (voiceSource === src) voiceSource = null; };
+    src.start(0);
+    voiceSource = src;
     return true;
   } catch (e) { return false; }
 }
 
-function fallbackTTS(text) {
-  if (!window.speechSynthesis || !text) return;
+function loadVoiceBuffer(key) {
+  if (voiceBufs.has(key)) return Promise.resolve(voiceBufs.get(key));
+  initAudio();
+  if (!ac) return Promise.reject(new Error('no-audio'));
+  const url = voiceUrl(key);
+  return fetch(url, { cache: 'force-cache', credentials: 'same-origin' })
+    .then(res => {
+      if (!res.ok) throw new Error('voice-http-' + res.status);
+      return res.arrayBuffer();
+    })
+    .then(ab => ac.decodeAudioData(ab.slice(0)))
+    .then(buf => {
+      voiceBufs.set(key, buf);
+      return buf;
+    });
+}
+
+function playVoiceHtml(key) {
+  // Secondary path — absolute URL, no SW range issues for short clips
   try {
-    // Prefer any installed Natural / neural female voice (Aria/Jenny/Ava/Emma)
-    const voices = window.speechSynthesis.getVoices() || [];
-    const rank = v => {
-      const n = (v.name || '') + ' ' + (v.voiceURI || '');
-      let s = 0;
-      if (/natural|neural|online/i.test(n)) s += 50;
-      if (/aria|jenny|ava|emma|michelle|sonia|ana|linda/i.test(n)) s += 40;
-      if (/female/i.test(v.name) || v.gender === 'female') s += 20;
-      if (/en-US|en_US|en-GB|en-CA/i.test(v.lang)) s += 10;
-      if (/zira|david|mark|male|robot/i.test(n)) s -= 30;
-      return s;
-    };
-    const best = voices.slice().sort((a,b) => rank(b) - rank(a))[0];
-    const u = new SpeechSynthesisUtterance(text);
-    if (best && rank(best) > 0) u.voice = best;
-    u.rate = 0.88; u.pitch = 1.06; u.volume = 0.85; u.lang = (best && best.lang) || 'en-US';
-    window.speechSynthesis.speak(u);
-  } catch (e) {}
+    let a = voiceHtml.get(key);
+    if (!a) {
+      a = new Audio();
+      a.preload = 'auto';
+      a.src = voiceUrl(key);
+      a.setAttribute('playsinline', 'true');
+      a.setAttribute('webkit-playsinline', 'true');
+      voiceHtml.set(key, a);
+    }
+    stopVoice();
+    a.volume = 1;
+    try { a.currentTime = 0; } catch (e) {}
+    activeVoiceEl = a;
+    const p = a.play();
+    if (p && p.catch) {
+      p.catch(() => { if (activeVoiceEl === a) activeVoiceEl = null; });
+    }
+    return true;
+  } catch (e) { return false; }
+}
+
+// Primary: Web Audio decode of Aria neural MP3. Never falls back to robotic TTS.
+function playVoiceFile(key) {
+  if (!key || !speechOn) return false;
+  initAudio();
+  // Fast path if already decoded (normal after PLAY preload)
+  if (voiceBufs.has(key)) {
+    return playDecodedBuffer(voiceBufs.get(key));
+  }
+  // Load full MP3 → decode → play through AudioContext (reliable, no SW Range bugs)
+  loadVoiceBuffer(key).then(buf => {
+    if (speechOn) playDecodedBuffer(buf);
+  }).catch(() => {
+    // HTMLAudio only if decode/fetch fails — still Aria file, never OS TTS
+    playVoiceHtml(key);
+  });
+  return true;
 }
 
 function sayLabel(lbl) {
   if (!speechOn || !lbl || lbl === '⭐') return;
   const now = performance.now();
-  if (now - lastSay < 220) return;
+  if (now - lastSay < 200) return;
   lastSay = now;
   const key = voiceKeyFor(lbl);
-  if (key && playVoiceFile(key)) return;
-  let text = SAY_MAP[lbl] || lbl;
-  if (isColorLabel(lbl)) text = colorNameOf(lbl);
-  else if (/^\d+$/.test(lbl)) text = NUM_WORDS[lbl] || lbl;
-  fallbackTTS(text);
+  // Neural pack only. Silent if missing is better than robotic OS voices.
+  if (key) playVoiceFile(key);
 }
 
 function sayPhrase(id) {
   if (!speechOn || !id) return;
   const now = performance.now();
-  if (now - lastSay < 180) return;
+  if (now - lastSay < 160) return;
   lastSay = now;
-  if (playVoiceFile(phraseKey(id))) return;
-  const map = {
-    wow:'Wow!', yay:'Yay!', amazing:'Amazing!', greatjob:'Great job!',
-    levelup:'Level up!', gold:'Gold star!', mission:'Mission complete!',
-    find:'Find it!', super:'Super!', letsplay:"Let's play!", tapme:'Tap me!'
-  };
-  fallbackTTS(map[id] || id);
+  const key = phraseKey(id);
+  if (key) playVoiceFile(key);
 }
 
 function preloadVoiceCore() {
-  // Warm the most common clips after first tap (keeps first letter pop snappy)
-  const core = ['LA','LB','LC','LD','N1','N2','N3','Adog','Acat','Cred','Cblue',
-                'Pwow','Pyay','Plevelup','Pgold','Pmission','Pfind','Ptapme','Pletsplay'];
+  initAudio();
+  voiceReady = true;
+  getVoiceBase();
+  const core = [
+    'LA','LB','LC','LD','LE','N1','N2','N3','N4','N5',
+    'Adog','Acat','Abunny','Cred','Cblue','Cgreen',
+    'Pwow','Pyay','Plevelup','Pgold','Pmission','Pfind','Ptapme','Pletsplay',
+    'Pdino','Pcars','Pocean','Probot','Pspace','Pfantasy','Pamazing','Psuper','Pgreatjob'
+  ];
+  // Decode into memory after first user gesture (PLAY tap) so pops are instant + neural
   core.forEach(k => {
-    if (voicePool.has(k)) return;
-    try {
-      const a = new Audio('voice/' + k + '.mp3');
-      a.preload = 'auto';
-      voicePool.set(k, a);
-    } catch (e) {}
+    loadVoiceBuffer(k).catch(() => {
+      // Warm HTML element as backup
+      try {
+        if (!voiceHtml.has(k)) {
+          const a = new Audio();
+          a.preload = 'auto';
+          a.src = voiceUrl(k);
+          voiceHtml.set(k, a);
+        }
+      } catch (e) {}
+    });
   });
-  // Unlock/load speech voice list for fallback
-  try {
-    if (window.speechSynthesis) {
-      window.speechSynthesis.getVoices();
-      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-    }
-  } catch (e) {}
 }
 
 function toggleSpeech() {

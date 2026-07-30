@@ -2,7 +2,7 @@
    No third-party URLs. No analytics. Offline-first for free play. */
 'use strict';
 
-const CACHE = 'karma-play-v2.1.0';
+const CACHE = 'karma-play-v2.1.2';
 const ASSETS = [
   './',
   './index.html',
@@ -37,6 +37,13 @@ self.addEventListener('fetch', event => {
   const url = new URL(req.url);
   // Same-origin only — never touch foreign hosts
   if (url.origin !== self.location.origin) return;
+
+  // CRITICAL: do not intercept neural voice clips or Range media requests.
+  // Service-worker caching without 206 Range support makes HTMLAudio / media
+  // fail, which previously forced a robotic browser-TTS fallback.
+  if (url.pathname.includes('/voice/') || req.headers.has('range')) {
+    return;
+  }
 
   event.respondWith(
     caches.match(req).then(cached => {
