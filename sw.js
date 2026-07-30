@@ -2,7 +2,7 @@
    No third-party URLs. No analytics. Offline-first for free play. */
 'use strict';
 
-const CACHE = 'karma-play-v2.1.2';
+const CACHE = 'karma-play-v2.2.0';
 const ASSETS = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const ASSETS = [
   './og-card.jpg',
   './robots.txt',
   './voice/manifest.json'
+  // intro.mp4 is large media — fetched natively (Range), not precached
 ];
 
 self.addEventListener('install', event => {
@@ -38,10 +39,14 @@ self.addEventListener('fetch', event => {
   // Same-origin only — never touch foreign hosts
   if (url.origin !== self.location.origin) return;
 
-  // CRITICAL: do not intercept neural voice clips or Range media requests.
-  // Service-worker caching without 206 Range support makes HTMLAudio / media
-  // fail, which previously forced a robotic browser-TTS fallback.
-  if (url.pathname.includes('/voice/') || req.headers.has('range')) {
+  // CRITICAL: do not intercept media (voice, intro video) or Range requests.
+  // SW caching without 206 Range support breaks audio/video on mobile.
+  if (
+    url.pathname.includes('/voice/') ||
+    url.pathname.endsWith('/intro.mp4') ||
+    url.pathname.endsWith('intro.mp4') ||
+    req.headers.has('range')
+  ) {
     return;
   }
 
