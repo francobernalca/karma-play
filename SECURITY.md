@@ -1,4 +1,4 @@
-# Security & privacy — Karma Play
+# Security & privacy · Karma Play
 
 ## Product promises
 - **No ads. No accounts. No analytics. No trackers.**
