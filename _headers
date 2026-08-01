@@ -1,0 +1,38 @@
+/*
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self' https://francobernal.ca https://www.francobernal.ca; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' blob:; connect-src 'self'; manifest-src 'self'; worker-src 'self' blob:
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), midi=(), serial=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Permitted-Cross-Domain-Policies: none
+
+# DELIBERATELY NO X-Frame-Options.
+# francobernal.ca embeds this game in a cross-origin iframe (the portal, see
+# KARMA_URL in the site's script.js). X-Frame-Options has no working
+# "allow one specific origin" value in modern browsers, so DENY or SAMEORIGIN
+# would black out the portal. CSP frame-ancestors above supersedes it and does
+# the job properly: only francobernal.ca may frame this, nobody else. Do not
+# "harden" this by adding X-Frame-Options back.
+
+# script-src needs 'unsafe-inline' because the entire game ships as one ~55KB
+# inline <script>. A CSP hash would be stricter but would break the page on
+# every single code edit. If the game is ever moved to an external .js file,
+# drop 'unsafe-inline' from script-src.
+
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/manifest.webmanifest
+  Cache-Control: public, max-age=0, must-revalidate
+
+/voice/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/docs/*
+  Cache-Control: public, max-age=31536000, immutable
