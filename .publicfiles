@@ -1,0 +1,16 @@
+# Public surface allowlist for karma-play.
+# docs/ and tools/ are deliberately absent. docs/CLOUDFLARE.md is deployment
+# documentation and tools/ holds build scripts; neither belongs on a website
+# aimed at toddlers, and both were being published only because the old deploy
+# shipped the whole repository root.
+
+index.html
+_headers
+404.html
+robots.txt
+icon.svg
+og-card.jpg
+intro.mp4
+manifest.webmanifest
+sw.js
+voice
