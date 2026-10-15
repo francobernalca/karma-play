@@ -33,3 +33,4 @@ credentials.*
 .cloudflare/
 wrangler.toml.local
 *.local
+_site/
