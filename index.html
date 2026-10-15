@@ -569,55 +569,13 @@ body.q-low .hBtn,body.q-low .hPill,body.q-low #wPlay,body.q-low .btnBack{
   .bgP{opacity:.25}
 }
 
-/* ═══════════════════════════════════════════════════
-   INTRO VIDEO — autoplay muted, then main PLAY screen
-═══════════════════════════════════════════════════ */
-#sIntro{
-  z-index:200;background:#03010f;
-  overflow:hidden;pointer-events:none}
-#introStage{
-  position:absolute;inset:0;overflow:hidden;background:#03010f}
-#introVid{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;object-position:center;
-  background:#03010f;
-  opacity:0;
-  transition:opacity .45s ease}
-#introVid.on{opacity:1}
-#introVid.out{opacity:0;transition:opacity .55s ease}
-#introVeil{
-  position:absolute;inset:0;z-index:2;pointer-events:none;
-  background:
-    radial-gradient(ellipse 90% 75% at 50% 45%,transparent 35%,rgba(3,1,15,.25) 75%,rgba(3,1,15,.55) 100%)}
-#introFlash{
-  position:absolute;inset:0;z-index:20;pointer-events:none;
-  background:#03010f;
-  opacity:0;transition:opacity .5s ease}
-#introFlash.on{opacity:1}
-#sIntro.leaving{pointer-events:none}
 </style>
 </head>
 <body>
 
-<!-- INTRO: silent video, then main welcome/PLAY -->
-<div class="scr" id="sIntro" aria-hidden="true">
-  <div id="introStage">
-    <video id="introVid"
-      muted defaultMuted
-      playsinline webkit-playsinline
-      autoplay
-      preload="auto"
-      disablePictureInPicture
-      controlslist="nodownload noplaybackrate noremoteplayback">
-      <source src="intro.mp4" type="video/mp4">
-    </video>
-    <div id="introVeil"></div>
-  </div>
-  <div id="introFlash"></div>
-</div>
 
 <!-- WELCOME -->
-<div class="scr hide" id="sWelcome">
+<div class="scr" id="sWelcome">
   <div id="wBg"></div>
   <div id="wIco">🎈</div>
   <div id="wTitle">KARMA<br>PLAY</div>
@@ -1354,9 +1312,7 @@ function buzz(ms) {
 // ════════════════════════════════════════════════════
 // SCREENS
 // ════════════════════════════════════════════════════
-const SCREENS = ['sIntro','sWelcome','sThemes','sGame'];
-let introDone = false;
-let introFinishing = false;
+const SCREENS = ['sWelcome','sThemes','sGame'];
 
 function showScr(id) {
   SCREENS.forEach(s => document.getElementById(s).classList.toggle('hide', s !== id));
@@ -1374,102 +1330,6 @@ function goThemes() {
   showScr('sThemes');
 }
 
-// ── Intro video: autoplay muted → main welcome. No gates, no skip, no sound.
-function introMediaUrl() {
-  try {
-    if (location.protocol === 'file:') return 'intro.mp4';
-    let path = location.pathname || '/';
-    if (path.endsWith('/index.html')) path = path.slice(0, -10);
-    else if (!path.endsWith('/')) path = path + '/';
-    return location.origin + path + 'intro.mp4';
-  } catch (e) { return 'intro.mp4'; }
-}
-
-function finishIntro() {
-  if (introFinishing || introDone) return;
-  introFinishing = true;
-  const root = document.getElementById('sIntro');
-  const vid = document.getElementById('introVid');
-  const flash = document.getElementById('introFlash');
-  if (root) root.classList.add('leaving');
-  if (vid) {
-    try { vid.pause(); } catch (e) {}
-    vid.classList.add('out');
-  }
-  if (flash) flash.classList.add('on');
-
-  setTimeout(() => {
-    introDone = true;
-    if (vid) {
-      try { vid.removeAttribute('src'); vid.load(); } catch (e) {}
-    }
-    refreshWelcomeMeta();
-    showScr('sWelcome');
-    const w = document.getElementById('sWelcome');
-    if (w) {
-      w.style.opacity = '0';
-      w.style.transition = 'opacity .55s ease';
-      requestAnimationFrame(() => { w.style.opacity = '1'; });
-      setTimeout(() => { w.style.transition = ''; w.style.opacity = ''; }, 650);
-    }
-  }, 480);
-}
-
-function runIntro() {
-  if (introDone || introFinishing) return;
-  const vid = document.getElementById('introVid');
-  if (!vid) { finishIntro(); return; }
-
-  // Reduced motion: go straight to main
-  try {
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      finishIntro();
-      return;
-    }
-  } catch (e) {}
-
-  const src = introMediaUrl();
-  if (!vid.getAttribute('data-src-set')) {
-    vid.src = src;
-    vid.setAttribute('data-src-set', '1');
-  }
-  vid.muted = true;
-  vid.defaultMuted = true;
-  vid.volume = 0;
-  vid.playsInline = true;
-  vid.setAttribute('muted', '');
-  vid.setAttribute('playsinline', '');
-  vid.setAttribute('webkit-playsinline', '');
-  vid.classList.add('on');
-
-  const failSafe = setTimeout(() => {
-    if (!introDone) finishIntro();
-  }, 9000);
-
-  const done = () => {
-    clearTimeout(failSafe);
-    finishIntro();
-  };
-  vid.addEventListener('ended', done, { once: true });
-  vid.addEventListener('error', done, { once: true });
-
-  const tryPlay = () => {
-    const p = vid.play();
-    if (p && p.catch) {
-      p.catch(() => {
-        // Muted autoplay should work; if not, don't block the game
-        done();
-      });
-    }
-  };
-
-  if (vid.readyState >= 2) tryPlay();
-  else {
-    vid.addEventListener('canplay', tryPlay, { once: true });
-    try { vid.load(); } catch (e) {}
-    tryPlay();
-  }
-}
 
 // Welcome art
 (function buildStars() {
@@ -2240,7 +2100,8 @@ document.addEventListener('visibilitychange', () => {
 });
 
 // ── Bindings ───────────────────────────────────────
-runIntro();
+refreshWelcomeMeta();
+showScr('sWelcome');
 document.getElementById('wPlay').addEventListener('click', goThemes);
 document.getElementById('bThemesBack').addEventListener('click', goWelcome);
 document.getElementById('homeBtn').addEventListener('click', goWelcome);
