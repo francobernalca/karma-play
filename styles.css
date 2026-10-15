@@ -401,6 +401,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--ink); outline-o
   .earned-sticker svg { width: 76px; height: 76px; }
   .earned-item { width: 58px; height: 58px; }
   .pill { min-height: 52px; }
+  .rest-art svg { width: 116px; }
+  .card p { margin: 2px auto 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

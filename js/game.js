@@ -216,7 +216,8 @@ function startRound(world) {
   const n = S.settings.length === 'short' ? 6 : 10;
   R = {
     world, n, popped: 0, nextFind: 3, findStep: 4, find: null, ending: false,
-    golden: Math.random() < 0.65 ? 2 + rnd(n - 3) : -1, goldenDone: false,
+    // A golden balloon is rare: about one round in three, and always in a child's very first round.
+    golden: S.rounds === 0 || Math.random() < 0.35 ? 2 + rnd(n - 3) : -1, goldenDone: false,
     stickers: [], found: [], lastKey: null, recent: [], colors: [],
     stage: stageFor(S.seen), lastSpawn: -1e9, warm: 3, started: now(), visibleMs: 0, visSince: now(),
   };

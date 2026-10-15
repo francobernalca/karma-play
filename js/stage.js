@@ -224,6 +224,11 @@ export class Stage {
     };
     b.str = this._newString(b);
     this._sprite(color, item, R);
+    // Render the floating card while the balloon rises, not in the frame it pops.
+    if (item && item.kind !== 'gold') {
+      const warm = () => { if (b.state !== 'gone') this._card(b); };
+      if (window.requestIdleCallback) requestIdleCallback(warm, { timeout: 600 }); else setTimeout(warm, 120);
+    }
     this.balloons.push(b);
     return b;
   }
@@ -345,12 +350,12 @@ export class Stage {
     const n = this.quality === 0 ? 8 : 12;
     for (let j = 0; j < n; j++) {
       const s = this.shardFree.pop() || {};
-      const a = (j / n) * TAU + rnd(-0.25, 0.25), d = rnd(0.25, 0.9);
+      const a = (j / n) * TAU + rnd(-0.25, 0.25), d = rnd(0.55, 1.0);
       s.x = b.x + Math.cos(a) * R * d * 0.9; s.y = b.y + Math.sin(a) * R * d;
-      const sp = reduced ? rnd(10, 40) : rnd(150, 380);
+      const sp = reduced ? rnd(10, 40) : rnd(140, 340);
       s.vx = Math.cos(a) * sp + b.vx * 0.3; s.vy = Math.sin(a) * sp - (reduced ? 0 : rnd(40, 140));
       s.r = rnd(0, TAU); s.vr = reduced ? 0 : rnd(-9, 9); s.flip = rnd(0, TAU); s.vf = reduced ? 0 : rnd(5, 12);
-      s.size = R * rnd(0.2, 0.34); s.path = this.shardPaths[(Math.random() * 24) | 0];
+      s.size = R * rnd(0.26, 0.42); s.path = this.shardPaths[(Math.random() * 24) | 0];
       s.color = b.tones[j % 3]; s.life = 0; s.max = rnd(0.9, 1.25);
       this.shards.push(s);
     }
@@ -366,7 +371,7 @@ export class Stage {
     const st = b.str;
     st.alpha = 1;
     this.loose.push(st);
-    if (b.item && b.item.kind !== 'gold' && b.byUser) this.floaters.push({ card: this._card(b), x: b.x, y: b.y, t: 0 });
+    if (b.item && b.item.kind !== 'gold' && b.byUser) this.floaters.push({ card: this._card(b), x: b.x, y: b.y, t: reduced ? 0 : -0.07 });   // the burst reads first, then the card blooms
     this.onPop(b);
   }
 
@@ -564,6 +569,7 @@ export class Stage {
     }
     for (const f of this.floaters) {
       const t = f.t, c = f.card;
+      if (t < 0) continue;
       let s = 1, a = 1, dy;
       if (reduced) { a = t < 0.15 ? t / 0.15 : t > 1.05 ? Math.max(0, 1 - (t - 1.05) / 0.3) : 1; dy = 0; }
       else {
