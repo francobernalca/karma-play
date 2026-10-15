@@ -20,7 +20,7 @@ picture, balloon and voice clip then works without a connection.
 - **A round** is 10 pops (or 6, set by a grown-up). Balloons rise calmly, at most 5 to 7
   on screen, each at least 2 cm wide with a generous hit area. Every pop names the item
   and floats it up large, with its word for animals, shapes and colours.
-- **Find moments:** every third or fourth pop the voice asks for one thing ("Find it! B!")
+- **Find moments:** every third or fourth pop the voice asks for one thing ("Find the letter B!")
   while two to four candidates float. After 6 seconds idle the target wobbles and the
   question repeats. Popping another balloon still pops: the voice names it and asks again.
 - **First taps:** if a child only watches, the voice says "Tap me!" and the lowest
@@ -80,7 +80,7 @@ Microsoft Edge neural voice en-US-JennyNeural, rate +12%, pitch +10 Hz.
 - `python tools/voice2-build.py` trims every clip to 40 ms of silence, matches loudness,
   encodes mono 24 kHz MP3, checks for truncation, and writes `voice2/`,
   `voice2/manifest.json` and `js/voice-pack.js`. Needs ffmpeg and numpy.
-- Until a prompt clip exists, the game says "Find it!" followed by the item's own name.
+- If a prompt clip is ever missing, the game falls back to "Find it!" followed by the item's own name.
 - `/voice/` (the v1 pack) and `/voice2/` are cached for a year: never change the bytes
   of an existing clip name.
 

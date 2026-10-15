@@ -4,7 +4,7 @@
  "rate": "+12%",
  "pitch": "+10Hz",
  "format": "mp3 mono 24 kHz 48 kbps, silence trimmed to 40 ms, voiced RMS -18 dBFS",
- "count": 83,
+ "count": 165,
  "clips": {
   "Abear": {
    "text": "bear!",
@@ -109,6 +109,302 @@
   "Cyellow": {
    "text": "yellow!",
    "ms": 510
+  },
+  "FAbear": {
+   "text": "Find the bear!",
+   "ms": 715
+  },
+  "FAbunny": {
+   "text": "Find the bunny!",
+   "ms": 725
+  },
+  "FAcat": {
+   "text": "Find the cat!",
+   "ms": 805
+  },
+  "FAchicken": {
+   "text": "Find the chicken!",
+   "ms": 800
+  },
+  "FAcow": {
+   "text": "Find the cow!",
+   "ms": 750
+  },
+  "FAdog": {
+   "text": "Find the dog!",
+   "ms": 750
+  },
+  "FAduck": {
+   "text": "Find the duck!",
+   "ms": 760
+  },
+  "FAelephant": {
+   "text": "Find the elephant!",
+   "ms": 940
+  },
+  "FAfox": {
+   "text": "Find the fox!",
+   "ms": 900
+  },
+  "FAfrog": {
+   "text": "Find the frog!",
+   "ms": 800
+  },
+  "FAgiraffe": {
+   "text": "Find the giraffe!",
+   "ms": 890
+  },
+  "FAhorse": {
+   "text": "Find the horse!",
+   "ms": 820
+  },
+  "FAkoala": {
+   "text": "Find the koala!",
+   "ms": 860
+  },
+  "FAlion": {
+   "text": "Find the lion!",
+   "ms": 795
+  },
+  "FAmonkey": {
+   "text": "Find the monkey!",
+   "ms": 835
+  },
+  "FApanda": {
+   "text": "Find the panda!",
+   "ms": 800
+  },
+  "FApenguin": {
+   "text": "Find the penguin!",
+   "ms": 845
+  },
+  "FApig": {
+   "text": "Find the pig!",
+   "ms": 760
+  },
+  "FAtiger": {
+   "text": "Find the tiger!",
+   "ms": 825
+  },
+  "FAzebra": {
+   "text": "Find the zebra!",
+   "ms": 780
+  },
+  "FCblue": {
+   "text": "Find a blue balloon!",
+   "ms": 990
+  },
+  "FCgreen": {
+   "text": "Find a green balloon!",
+   "ms": 1025
+  },
+  "FCorange": {
+   "text": "Find a orange balloon!",
+   "ms": 1060
+  },
+  "FCpurple": {
+   "text": "Find a purple balloon!",
+   "ms": 1070
+  },
+  "FCred": {
+   "text": "Find a red balloon!",
+   "ms": 1005
+  },
+  "FCyellow": {
+   "text": "Find a yellow balloon!",
+   "ms": 1070
+  },
+  "FLA": {
+   "text": "Find the letter A!",
+   "ms": 890
+  },
+  "FLB": {
+   "text": "Find the letter B!",
+   "ms": 870
+  },
+  "FLC": {
+   "text": "Find the letter C!",
+   "ms": 990
+  },
+  "FLD": {
+   "text": "Find the letter D!",
+   "ms": 940
+  },
+  "FLE": {
+   "text": "Find the letter E!",
+   "ms": 890
+  },
+  "FLF": {
+   "text": "Find the letter F!",
+   "ms": 1000
+  },
+  "FLG": {
+   "text": "Find the letter G!",
+   "ms": 1005
+  },
+  "FLH": {
+   "text": "Find the letter H!",
+   "ms": 1055
+  },
+  "FLI": {
+   "text": "Find the letter I!",
+   "ms": 920
+  },
+  "FLJ": {
+   "text": "Find the letter J!",
+   "ms": 1020
+  },
+  "FLK": {
+   "text": "Find the letter K!",
+   "ms": 990
+  },
+  "FLL": {
+   "text": "Find the letter L!",
+   "ms": 915
+  },
+  "FLM": {
+   "text": "Find the letter M!",
+   "ms": 960
+  },
+  "FLN": {
+   "text": "Find the letter N!",
+   "ms": 945
+  },
+  "FLO": {
+   "text": "Find the letter O!",
+   "ms": 900
+  },
+  "FLP": {
+   "text": "Find the letter P!",
+   "ms": 935
+  },
+  "FLQ": {
+   "text": "Find the letter Q!",
+   "ms": 985
+  },
+  "FLR": {
+   "text": "Find the letter R!",
+   "ms": 935
+  },
+  "FLS": {
+   "text": "Find the letter S!",
+   "ms": 1020
+  },
+  "FLT": {
+   "text": "Find the letter T!",
+   "ms": 1000
+  },
+  "FLU": {
+   "text": "Find the letter U!",
+   "ms": 895
+  },
+  "FLV": {
+   "text": "Find the letter V!",
+   "ms": 910
+  },
+  "FLW": {
+   "text": "Find the letter W!",
+   "ms": 1130
+  },
+  "FLX": {
+   "text": "Find the letter X!",
+   "ms": 1055
+  },
+  "FLY": {
+   "text": "Find the letter Y!",
+   "ms": 955
+  },
+  "FLZ": {
+   "text": "Find the letter Z!",
+   "ms": 965
+  },
+  "FN1": {
+   "text": "Find number one!",
+   "ms": 890
+  },
+  "FN10": {
+   "text": "Find number ten!",
+   "ms": 945
+  },
+  "FN2": {
+   "text": "Find number two!",
+   "ms": 910
+  },
+  "FN3": {
+   "text": "Find number three!",
+   "ms": 910
+  },
+  "FN4": {
+   "text": "Find number four!",
+   "ms": 950
+  },
+  "FN5": {
+   "text": "Find number five!",
+   "ms": 1025
+  },
+  "FN6": {
+   "text": "Find number six!",
+   "ms": 1030
+  },
+  "FN7": {
+   "text": "Find number seven!",
+   "ms": 975
+  },
+  "FN8": {
+   "text": "Find number eight!",
+   "ms": 930
+  },
+  "FN9": {
+   "text": "Find number nine!",
+   "ms": 955
+  },
+  "FScircle": {
+   "text": "Find the circle!",
+   "ms": 810
+  },
+  "FSdiamond": {
+   "text": "Find the diamond!",
+   "ms": 825
+  },
+  "FSheart": {
+   "text": "Find the heart!",
+   "ms": 755
+  },
+  "FSsquare": {
+   "text": "Find the square!",
+   "ms": 825
+  },
+  "FSstar": {
+   "text": "Find the star!",
+   "ms": 775
+  },
+  "FStriangle": {
+   "text": "Find the triangle!",
+   "ms": 915
+  },
+  "Hcar": {
+   "text": "Race car!",
+   "ms": 665
+  },
+  "Hdino": {
+   "text": "Dino!",
+   "ms": 480
+  },
+  "Hrobot": {
+   "text": "Robot!",
+   "ms": 555
+  },
+  "Hrocket": {
+   "text": "Rocket!",
+   "ms": 580
+  },
+  "Hunicorn": {
+   "text": "Unicorn!",
+   "ms": 640
+  },
+  "Hwhale": {
+   "text": "Whale!",
+   "ms": 415
   },
   "LA": {
    "text": "A!",
@@ -254,9 +550,17 @@
    "text": "nine!",
    "ms": 465
   },
+  "Palldone": {
+   "text": "All done! Great popping.",
+   "ms": 2160
+  },
   "Pamazing": {
    "text": "Amazing!",
    "ms": 630
+  },
+  "Paskgrownup": {
+   "text": "Ask a grown-up.",
+   "ms": 795
   },
   "Pcars": {
    "text": "Car World!",
@@ -267,12 +571,16 @@
    "ms": 640
   },
   "Pfantasy": {
-   "text": "Fantasy Kingdom!",
-   "ms": 900
+   "text": "Fantasy World!",
+   "ms": 810
   },
   "Pfind": {
    "text": "Find it!",
    "ms": 570
+  },
+  "Pfoundit": {
+   "text": "You found it!",
+   "ms": 710
   },
   "Pgold": {
    "text": "Gold star!",
@@ -282,6 +590,10 @@
    "text": "Great job!",
    "ms": 640
   },
+  "Pgreatpopping": {
+   "text": "Great popping!",
+   "ms": 780
+  },
   "Pletsplay": {
    "text": "Let's play!",
    "ms": 700
@@ -289,6 +601,10 @@
   "Pocean": {
    "text": "Ocean World!",
    "ms": 680
+  },
+  "Prest": {
+   "text": "Time for a rest. See you soon!",
+   "ms": 2475
   },
   "Probot": {
    "text": "Robot World!",
@@ -298,6 +614,10 @@
    "text": "Space World!",
    "ms": 770
   },
+  "Psticker": {
+   "text": "Sticker!",
+   "ms": 520
+  },
   "Psuper": {
    "text": "Super!",
    "ms": 530
@@ -306,6 +626,10 @@
    "text": "Tap me!",
    "ms": 550
   },
+  "Ptryagain": {
+   "text": "Try again!",
+   "ms": 710
+  },
   "Pwow": {
    "text": "Wow!",
    "ms": 410
@@ -313,6 +637,10 @@
   "Pyay": {
    "text": "Yay!",
    "ms": 455
+  },
+  "Pyes": {
+   "text": "Yes!",
+   "ms": 505
   },
   "Scircle": {
    "text": "circle!",
