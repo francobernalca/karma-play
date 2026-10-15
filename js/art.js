@@ -673,8 +673,13 @@ function hill(d, seed, base, amps, top, bottom, crest = 0.1) {
   d.push(lin(id, top, bottom));
   return { svg: `<path d="${R.d}" fill="url(#${id})"/>` + (crest ? `<path d="${R.d.replace(/ L\d+ 600Z$/, '').replace(/^M-?\d+ 600 L/, 'M')}" fill="none" stroke="#fff" stroke-opacity="${crest}" stroke-width="3"/>` : ''), y: R.y };
 }
-const layer = (h, body, defs, cls = '') =>
-  ({ h, cls, svg: `<svg class="layer ${cls}" viewBox="0 0 2400 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false"><defs>${defs.join('')}</defs>${body}</svg>` });
+// The 2400-wide strip is mirrored once on each side, so a wide, short screen scales the
+// layer by height (hills keep their designed size) instead of by width (which would
+// inflate the hills and crop their crests). Phones still see the middle of the strip.
+const layer = (h, body, defs, cls = '') => {
+  const id = uid('L');
+  return { h, cls, svg: `<svg class="layer ${cls}" viewBox="-2400 0 7200 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false"><defs>${defs.join('')}</defs><g id="${id}">${body}</g><use href="#${id}" transform="matrix(-1 0 0 1 0 0)"/><use href="#${id}" transform="matrix(-1 0 0 1 4800 0)"/></svg>` };
+};
 
 function cloud(c = '#fff', o = 0.75) {
   return svg('0 0 200 80', `<path d="M30 70C12 70 6 56 14 46C10 30 30 22 44 30C52 12 80 8 94 24C106 12 132 16 136 34C154 28 172 40 166 56C180 60 178 70 164 70Z" fill="${c}" fill-opacity="${o}"/>`, 'aria-hidden="true"');

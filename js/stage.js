@@ -228,15 +228,20 @@ export class Stage {
     return b;
   }
 
+  // The spawn point farthest from every balloon still low on screen, so new balloons
+  // never stack on top of each other as they enter.
   _freeX(side) {
     const span = this.w - side * 2;
     if (span <= 0) return this.w / 2;
+    const y0 = this.h + this.R * 1.3;
     let best = side + Math.random() * span, bestD = -1;
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 14; i++) {
       const x = side + Math.random() * span;
       let d = 1e9;
       for (const b of this.balloons) {
-        if (b.y > this.h * 0.45) d = Math.min(d, Math.abs(b.x - x) / this.R + (b.y - this.h) / this.R * -0.15);
+        if (b.state !== 'rise' || b.y < this.h * 0.35) continue;
+        const dx = (b.x - x) / this.R, dy = (b.y - y0) / this.R;
+        d = Math.min(d, Math.sqrt(dx * dx + dy * dy * 0.6));
       }
       if (d > bestD) { bestD = d; best = x; }
     }

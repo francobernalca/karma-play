@@ -23,7 +23,7 @@ export function mountScene(host, worldId) {
   layoutScene(host);
 }
 
-// A layer is an SVG with viewBox 2400x600 drawn with xMidYMax slice. Anchored details
+// A layer is a 2400x600 strip (mirrored either side, viewBox -2400..4800) drawn with xMidYMax slice. Anchored details
 // (volcano smoke, the car on the road, tower lights) map a viewBox point to the screen.
 export function layoutScene(host) {
   const box = host.getBoundingClientRect();
@@ -31,8 +31,8 @@ export function layoutScene(host) {
   const layers = {};
   for (const l of host.querySelectorAll('.layer')) {
     const h = box.height * +l.dataset.h;
-    const s = Math.max(box.width / 2400, h / 600);
-    layers[l.classList[1]] = { s, ox: (box.width - 2400 * s) / 2, oy: box.height - h + (h - 600 * s) };
+    const s = Math.max(box.width / 7200, h / 600);
+    layers[l.classList[1]] = { s, ox: (box.width - 7200 * s) / 2 + 2400 * s, oy: box.height - 600 * s };
   }
   for (const el of host.querySelectorAll('[data-anchor]')) {
     const [name, x, y] = el.dataset.anchor.split(',');
