@@ -676,9 +676,11 @@ function hill(d, seed, base, amps, top, bottom, crest = 0.1) {
 // The 2400-wide strip is mirrored once on each side, so a wide, short screen scales the
 // layer by height (hills keep their designed size) instead of by width (which would
 // inflate the hills and crop their crests). Phones still see the middle of the strip.
+// Each strip is clipped to its own 2400 width: ridges run 100 past either end, and without the
+// clip the overlap with the mirrored copy shows as a flat green block at every seam.
 const layer = (h, body, defs, cls = '') => {
-  const id = uid('L');
-  return { h, cls, svg: `<svg class="layer ${cls}" viewBox="-2400 0 7200 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false"><defs>${defs.join('')}</defs><g id="${id}">${body}</g><use href="#${id}" transform="matrix(-1 0 0 1 0 0)"/><use href="#${id}" transform="matrix(-1 0 0 1 4800 0)"/></svg>` };
+  const id = uid('L'), cp = uid('lc');
+  return { h, cls, svg: `<svg class="layer ${cls}" viewBox="-2400 0 7200 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false"><defs>${defs.join('')}<clipPath id="${cp}"><rect x="-0.5" y="-600" width="2401" height="1800"/></clipPath></defs><g id="${id}" clip-path="url(#${cp})">${body}</g><use href="#${id}" transform="matrix(-1 0 0 1 0 0)"/><use href="#${id}" transform="matrix(-1 0 0 1 4800 0)"/></svg>` };
 };
 
 function cloud(c = '#fff', o = 0.75) {
@@ -823,25 +825,56 @@ export const WORLDS = {
     build() {
       const a = [], b = [], c = [];
       const r = rng(51);
-      let city = '';
-      let x = 300;
-      while (x < 2100) {
-        const w = 80 + r() * 80, h = 140 + r() * 200, top = 600 - 160 - h;
-        city += `<rect x="${f1(x)}" y="${f1(top)}" width="${f1(w)}" height="${f1(600 - top)}" rx="${f1(w / 2.6)}" fill="#ADB3CC"/>`;
-        if (r() > 0.45) city += `<path d="M${f1(x + w / 2)} ${f1(top)}V${f1(top - 40)}" stroke="#ADB3CC" stroke-width="6" stroke-linecap="round"/><circle cx="${f1(x + w / 2)}" cy="${f1(top - 44)}" r="9" fill="#ADB3CC"/>`;
-        for (let wy = top + 36; wy < 420; wy += 44) city += `<circle cx="${f1(x + w / 2)}" cy="${f1(wy)}" r="8" fill="#BEC3D8"/>`;
-        x += w + 20 + r() * 40;
-      }
+      // Robot City: the skyline is a row of big, kind robots standing shoulder to shoulder
+      // with plain towers and a domed workshop, so the world reads as robots at a glance.
+      const haze = hill(a, 50, 360, [[30, 1300], [12, 420]], '#C7CBDF', '#CDD0E2', 0);
+      const bot = (x, w, h, tint) => {
+        const top = 470 - h, cx = x + w / 2, eyeY = top + w * 0.36;
+        let o = `<rect x="${x}" y="${f1(top)}" width="${w}" height="${f1(600 - top)}" rx="${f1(w * 0.24)}" fill="${tint}"/>`;
+        o += `<path d="M${f1(cx)} ${f1(top + 2)}V${f1(top - 38)}" stroke="#A1A7C3" stroke-width="7" stroke-linecap="round"/><circle cx="${f1(cx)}" cy="${f1(top - 46)}" r="11" fill="#E39B7F"/>`;
+        o += `<circle cx="${x}" cy="${f1(eyeY)}" r="${f1(w * 0.07)}" fill="#A1A7C3"/><circle cx="${x + w}" cy="${f1(eyeY)}" r="${f1(w * 0.07)}" fill="#A1A7C3"/>`;
+        o += `<rect x="${f1(x + w * 0.13)}" y="${f1(top + w * 0.2)}" width="${f1(w * 0.74)}" height="${f1(w * 0.32)}" rx="${f1(w * 0.16)}" fill="#8F96B6"/>`;
+        o += `<circle cx="${f1(x + w * 0.35)}" cy="${f1(eyeY)}" r="${f1(w * 0.075)}" fill="#DDF0E8"/><circle cx="${f1(x + w * 0.65)}" cy="${f1(eyeY)}" r="${f1(w * 0.075)}" fill="#DDF0E8"/>`;
+        o += `<rect x="${f1(x + w * 0.36)}" y="${f1(top + w * 0.62)}" width="${f1(w * 0.28)}" height="${f1(w * 0.06)}" rx="${f1(w * 0.03)}" fill="#C3C8DB"/>`;
+        for (let wy = top + w * 0.86; wy < 430; wy += 46) for (const fx of [0.32, 0.68]) o += `<rect x="${f1(x + w * fx - 9)}" y="${f1(wy)}" width="18" height="22" rx="7" fill="#C3C8DB"/>`;
+        return o;
+      };
+      const tower = (x, w, h) => {
+        const top = 470 - h;
+        let o = `<rect x="${x}" y="${f1(top)}" width="${w}" height="${f1(600 - top)}" rx="${f1(w / 2)}" fill="#B6BBD2"/>`;
+        for (let wy = top + w * 0.6; wy < 440; wy += 40) o += `<rect x="${f1(x + w / 2 - 10)}" y="${f1(wy)}" width="20" height="16" rx="7" fill="#C8CCDD"/>`;
+        return o;
+      };
+      const dome = (x, w, h) => {
+        const top = 470 - h, R2 = w / 2, cx = x + R2;
+        return `<rect x="${f1(x + w * 0.78)}" y="${f1(top - 70)}" width="26" height="${f1(h + 200)}" rx="10" fill="#A9AFC9"/>
+          <path d="M${f1(x + w * 0.78)} ${f1(top - 40)}h26M${f1(x + w * 0.78)} ${f1(top - 10)}h26" stroke="#C3C8DB" stroke-width="6"/>
+          <path d="M${x} 600V${f1(top + R2)}A${f1(R2)} ${f1(R2)} 0 0 1 ${x + w} ${f1(top + R2)}V600Z" fill="#B0B6CE"/>
+          <circle cx="${f1(cx)}" cy="${f1(top + R2 * 0.95)}" r="${f1(R2 * 0.42)}" fill="#8F96B6"/><circle cx="${f1(cx)}" cy="${f1(top + R2 * 0.95)}" r="${f1(R2 * 0.42)}" fill="none" stroke="#C3C8DB" stroke-width="7"/>
+          <circle cx="${f1(cx - R2 * 0.12)}" cy="${f1(top + R2 * 0.82)}" r="${f1(R2 * 0.1)}" fill="#DDF0E8" opacity=".75"/>`;
+      };
+      const city = [
+        tower(300, 90, 230), bot(410, 150, 290, '#AEB4CC'), tower(590, 80, 180), dome(690, 170, 200),
+        bot(890, 128, 240, '#A9AFC9'), tower(1036, 92, 320), bot(1150, 192, 350, '#ADB3CC'), tower(1366, 98, 262),
+        dome(1484, 160, 180), bot(1666, 140, 280, '#A9AFC9'), tower(1826, 88, 220), bot(1936, 150, 250, '#AEB4CC'),
+      ].join('');
       const mid = hill(b, 52, 300, [[34, 900], [14, 320]], '#A9CEC0', '#93BBAB', 0.18);
       let traces = '';
       for (const sx of [560, 900, 1260, 1600, 1900]) {
         const y0 = mid.y(sx) + 40, len = 60 + r() * 80, turn = r() > 0.5 ? 1 : -1;
         traces += `<path d="M${sx} 600V${f1(y0 + 60)}L${sx + turn * 50} ${f1(y0 + 10)}H${f1(sx + turn * (50 + len))}" fill="none" stroke="#C7E2D7" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${f1(sx + turn * (50 + len))}" cy="${f1(y0 + 10)}" r="11" fill="#C7E2D7"/>`;
       }
+      // two chips sitting on the circuit hill
+      const chip = x => {
+        const y = mid.y(x) + 34;
+        let legs = '';
+        for (const dx of [-24, 0, 24]) legs += `<path d="M${x + dx} ${f1(y - 34)}V${f1(y - 44)}M${x + dx} ${f1(y + 34)}V${f1(y + 44)}" stroke="#C7E2D7" stroke-width="6" stroke-linecap="round"/>`;
+        return legs + `<rect x="${x - 46}" y="${f1(y - 34)}" width="92" height="68" rx="14" fill="#86B3A1"/><circle cx="${x - 26}" cy="${f1(y - 14)}" r="6" fill="#A9CEC0"/>`;
+      };
       const floor = hill(c, 53, 140, [[10, 900]], '#8C93AE', '#7A819D', 0.14);
       let bolts = '';
       for (let bx = 200; bx < 2400; bx += 220) bolts += `<circle cx="${bx}" cy="${f1(floor.y(bx) + 50)}" r="8" fill="#9AA1BB"/>`;
-      return [layer(0.55, city, a, 'far'), layer(0.38, mid.svg + traces, b, 'mid'), layer(0.18, floor.svg + bolts, c, 'near')];
+      return [layer(0.55, haze.svg + city, a, 'far'), layer(0.38, mid.svg + traces + chip(760) + chip(1480), b, 'mid'), layer(0.18, floor.svg + bolts, c, 'near')];
     },
     ambient: [
       { kind: 'cloud', top: 10, left: 14, w: 26, dur: 120, o: 0.5 },
@@ -853,11 +886,30 @@ export const WORLDS = {
     name: 'Space', sky: ['#161E3A', '#1E294C', '#2B3762'], string: 'rgba(220,226,242,.5)', dark: true,
     build() {
       const a = [], b = [], c = [];
-      const far = hill(a, 61, 420, [[40, 1100], [16, 360]], '#36416D', '#333E68', 0.1);
-      const mid = hill(b, 62, 290, [[46, 900], [18, 300]], '#2F3961', '#2B355A', 0.1);
-      const near = hill(c, 63, 140, [[18, 800]], '#283153', '#232B4A', 0.1);
-      const crater = (R, x, rx) => { const y = R.y(x) + 60; return `<ellipse cx="${x}" cy="${f1(y)}" rx="${rx}" ry="${f1(rx * 0.32)}" fill="#1F2643"/><path d="M${x - rx} ${f1(y)}A${rx} ${f1(rx * 0.32)} 0 0 0 ${x + rx} ${f1(y)}" fill="none" stroke="#3B4673" stroke-width="5"/>`; };
-      return [layer(0.5, far.svg, a, 'far'), layer(0.36, mid.svg + crater(mid, 700, 70) + crater(mid, 1700, 90), b, 'mid'), layer(0.18, near.svg + crater(near, 1200, 110) + crater(near, 400, 60) + crater(near, 2000, 80), c, 'near')];
+      // A big planet rises behind a dusty moon, with a little rover and a flag on the near
+      // ground: the horizon reads as space, and the sky above stays open for the balloons.
+      const pg = uid('p'), pc = uid('pc');
+      a.push(lin(pg, '#47548A', '#2F3A66'));
+      a.push(`<clipPath id="${pc}"><circle cx="1200" cy="1190" r="880"/></clipPath>`);
+      const planet = `<circle cx="1200" cy="1190" r="880" fill="url(#${pg})"/>
+        <g clip-path="url(#${pc})" fill="#5A6698" opacity=".45"><ellipse cx="980" cy="390" rx="210" ry="34"/><ellipse cx="1500" cy="350" rx="150" ry="24"/><ellipse cx="1240" cy="470" rx="320" ry="40"/><ellipse cx="640" cy="520" rx="180" ry="30"/></g>
+        <circle cx="1200" cy="1190" r="880" fill="none" stroke="#8C98C8" stroke-opacity=".45" stroke-width="4"/>`;
+      const mid = hill(b, 62, 300, [[40, 900], [16, 300]], '#4B5484', '#3E4674', 0.12);
+      const near = hill(c, 63, 150, [[16, 800]], '#5C6492', '#4D5482', 0.14);
+      const crater = (R, x, rx, dark, lit) => { const y = R.y(x) + rx * 0.5 + 24; return `<ellipse cx="${x}" cy="${f1(y)}" rx="${rx}" ry="${f1(rx * 0.3)}" fill="${dark}"/><path d="M${x - rx * 0.9} ${f1(y + rx * 0.08)}A${rx} ${f1(rx * 0.3)} 0 0 0 ${x + rx * 0.9} ${f1(y + rx * 0.08)}" fill="none" stroke="${lit}" stroke-width="5" stroke-linecap="round"/>`; };
+      const rover = (() => {
+        const x = 1430, y = mid.y(1430) + 10;
+        return `<g transform="translate(${x} ${f1(y)}) scale(.62) translate(${-x} ${f1(-y)})"><path d="M${x + 30} ${f1(y - 96)}V${f1(y - 132)}" stroke="#B9C0DA" stroke-width="6" stroke-linecap="round"/><path d="M${x + 10} ${f1(y - 148)}Q${x + 30} ${f1(y - 120)} ${x + 54} ${f1(y - 140)}Z" fill="#D5DAEA"/>
+          <rect x="${x - 80}" y="${f1(y - 100)}" width="160" height="58" rx="22" fill="#D5DAEA"/><rect x="${x - 62}" y="${f1(y - 88)}" width="62" height="24" rx="10" fill="#8C98C8"/><circle cx="${x + 46}" cy="${f1(y - 76)}" r="8" fill="#E39B7F"/>
+          ${[-52, 0, 52].map(dx => `<circle cx="${x + dx}" cy="${f1(y - 28)}" r="24" fill="#2E365C"/><circle cx="${x + dx}" cy="${f1(y - 28)}" r="9" fill="#9EA6C6"/>`).join('')}</g>`;
+      })();
+      const flag = (() => {
+        const x = 940, y = mid.y(940) + 10;
+        return `<g transform="translate(${x} ${f1(y)}) scale(.6) translate(${-x} ${f1(-y)})"><path d="M${x} ${f1(y)}V${f1(y - 170)}" stroke="#C3C9DF" stroke-width="7" stroke-linecap="round"/><path d="M${x + 3} ${f1(y - 168)}H${x + 78}L${x + 64} ${f1(y - 146)}L${x + 78} ${f1(y - 124)}H${x + 3}Z" fill="#E39B7F"/><ellipse cx="${x}" cy="${f1(y + 4)}" rx="26" ry="7" fill="#3A4270"/></g>`;
+      })();
+      return [layer(0.5, planet, a, 'far'),
+        layer(0.36, mid.svg + crater(mid, 700, 70, '#3A4270', '#5E6898') + crater(mid, 1700, 90, '#3A4270', '#5E6898') + crater(mid, 1180, 46, '#3A4270', '#5E6898') + rover + flag, b, 'mid'),
+        layer(0.18, near.svg + crater(near, 1150, 100, '#4A5180', '#7079A6') + crater(near, 400, 60, '#4A5180', '#7079A6') + crater(near, 2000, 80, '#4A5180', '#7079A6'), c, 'near')];
     },
     ambient: [
       { kind: 'stars' },
@@ -940,7 +992,7 @@ export function ambientHTML(a, worldId) {
     case 'planet': return `<div class="amb amb-planet" ${data}>${svg('0 0 200 140', `<ellipse cx="100" cy="70" rx="96" ry="22" fill="none" stroke="#C9A99A" stroke-width="7" opacity=".55"/><circle cx="100" cy="70" r="50" fill="#C08B88"/><path d="M54 56Q100 46 146 58M52 76Q100 66 148 80M60 94Q100 88 140 98" fill="none" stroke="#B07B7A" stroke-width="8" stroke-linecap="round"/><path d="M4 70A96 22 0 0 0 196 70" fill="none" stroke="#D8B8A6" stroke-width="7" opacity=".85"/>`, 'aria-hidden="true"')}</div>`;
     case 'moon': return `<div class="amb amb-moon" ${data}>${svg('0 0 100 100', '<circle cx="50" cy="50" r="46" fill="#8C95B4"/><circle cx="36" cy="38" r="9" fill="#7C85A6"/><circle cx="62" cy="62" r="12" fill="#7C85A6"/><circle cx="64" cy="30" r="5" fill="#7C85A6"/>', 'aria-hidden="true"')}</div>`;
     case 'satellite': return `<div class="amb amb-orbit" ${data}>${svg('0 0 120 60', '<rect x="4" y="22" width="38" height="16" rx="3" fill="#7F8DB4"/><rect x="78" y="22" width="38" height="16" rx="3" fill="#7F8DB4"/><path d="M42 30H78" stroke="#A3ADC9" stroke-width="4"/><rect x="48" y="16" width="24" height="28" rx="7" fill="#B9C1D8"/><circle cx="60" cy="30" r="5" fill="#E8A07A"/>', 'aria-hidden="true"')}</div>`;
-    case 'butterfly': return `<div class="amb amb-flutter${a.hue ? ' alt' : ''}" ${data}>${svg('0 0 60 50', `<g class="wing wl"><path d="M30 25Q8 0 4 18Q2 30 30 27Z" fill="${a.hue ? '#B9D9C9' : '#E9B5CB'}"/><path d="M30 27Q10 34 14 44Q22 46 30 29Z" fill="${a.hue ? '#9FC9B4' : '#DC9DB8'}"/></g><g class="wing wr"><path d="M30 25Q52 0 56 18Q58 30 30 27Z" fill="${a.hue ? '#B9D9C9' : '#E9B5CB'}"/><path d="M30 27Q50 34 46 44Q38 46 30 29Z" fill="${a.hue ? '#9FC9B4' : '#DC9DB8'}"/></g><path d="M30 18V36" stroke="#5E4E78" stroke-width="3.2" stroke-linecap="round"/>`, 'aria-hidden="true"')}</div>`;
+    case 'butterfly': return `<div class="amb amb-flutter${a.hue ? ' alt' : ''}" ${data}>${svg('0 0 60 50', `<g class="wing wl"><path d="M30 25Q8 0 4 18Q2 30 30 27Z" fill="${a.hue ? '#9ACAB3' : '#E3A0BE'}"/><path d="M30 27Q10 34 14 44Q22 46 30 29Z" fill="${a.hue ? '#82B79E' : '#D489AB'}"/></g><g class="wing wr"><path d="M30 25Q52 0 56 18Q58 30 30 27Z" fill="${a.hue ? '#9ACAB3' : '#E3A0BE'}"/><path d="M30 27Q50 34 46 44Q38 46 30 29Z" fill="${a.hue ? '#82B79E' : '#D489AB'}"/></g><path d="M30 18V36" stroke="#7A6A98" stroke-width="3" stroke-linecap="round"/>`, 'aria-hidden="true"')}</div>`;
   }
   return '';
 }
