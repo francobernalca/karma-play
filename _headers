@@ -1,5 +1,5 @@
 /*
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self' https://francobernal.ca https://www.francobernal.ca; object-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob:; connect-src 'self'; manifest-src 'self'; worker-src 'self'
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self' https://francobernal.ca https://www.francobernal.ca; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' blob:; connect-src 'self'; manifest-src 'self'; worker-src 'self' blob:
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), midi=(), serial=()
@@ -14,12 +14,10 @@
 # the job properly: only francobernal.ca may frame this, nobody else. Do not
 # "harden" this by adding X-Frame-Options back.
 
-# script-src and style-src are 'self' only: the game ships as ES modules in js/
-# and one stylesheet, with no inline script, no inline style attributes in the
-# markup, and runtime styling only through the CSSOM (which CSP allows).
-# img-src keeps blob: because the animal and shape art is decoded from SVG
-# strings into bitmaps for the canvas. The meta CSP in index.html mirrors this
-# (minus frame-ancestors, which a meta tag cannot carry).
+# script-src needs 'unsafe-inline' because the entire game ships as one ~55KB
+# inline <script>. A CSP hash would be stricter but would break the page on
+# every single code edit. If the game is ever moved to an external .js file,
+# drop 'unsafe-inline' from script-src.
 
 /sw.js
   Cache-Control: public, max-age=0, must-revalidate
@@ -33,12 +31,8 @@
 /manifest.webmanifest
   Cache-Control: public, max-age=0, must-revalidate
 
-# Immutable for a year: new bytes always get a new file name.
 /voice/*
   Cache-Control: public, max-age=31536000, immutable
 
-/voice2/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/assets/*
+/docs/*
   Cache-Control: public, max-age=31536000, immutable

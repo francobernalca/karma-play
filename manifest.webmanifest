@@ -1,20 +1,21 @@
 {
   "name": "Karma Play",
   "short_name": "Karma Play",
-  "description": "Pop balloons and hear the letter, number, animal, colour or shape inside. Free, offline, no ads, no tracking.",
-  "id": "./",
+  "description": "Free offline balloon learning game for kids. No ads. No tracking.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#A9C5D5",
-  "theme_color": "#A9C5D5",
+  "background_color": "#07071a",
+  "theme_color": "#07071a",
   "lang": "en",
   "categories": ["games", "education", "kids"],
   "icons": [
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
-    { "src": "assets/icons/karma-play-192-2.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "assets/icons/karma-play-512-2.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "assets/icons/karma-play-maskable-512-2.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
   ]
 }

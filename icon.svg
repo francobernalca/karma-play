@@ -1,11 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="bgl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9CC2D6"/><stop offset="1" stop-color="#E6D3BE"/></linearGradient><linearGradient id="hm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86A992"/><stop offset="1" stop-color="#6E917C"/></linearGradient><radialGradient id="bn" cx="0.3" cy="0.24" r="0.95"><stop offset="0" stop-color="#eb817a" stop-opacity="1"/><stop offset="0.35" stop-color="#e4524a" stop-opacity="1"/><stop offset="0.78" stop-color="#E2453C" stop-opacity="1"/><stop offset="1" stop-color="#a83634" stop-opacity="1"/></radialGradient><radialGradient id="glo" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#fff" stop-opacity="0.55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="ssp" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#eb7d77" stop-opacity="0.45"/><stop offset="1" stop-color="#eb7d77" stop-opacity="0"/></radialGradient></defs><rect width="512" height="512" fill="url(#bgl)"/>
-    <path d="M0 420C90 380 170 372 256 392S420 430 512 404V512H0Z" fill="url(#hm)"/>
-    <path d="M0 462C120 436 230 444 330 460S470 474 512 466V512H0Z" fill="#5F826D"/>
-    <g transform="translate(256 226) scale(1.4260000000000002)"><path d="M0 128C-10 160 12 186 -2 222" fill="none" stroke="#45506A" stroke-width="3" stroke-linecap="round" opacity=".7"/>
-  <path d="M-8 115H8L12 128Q0 124 -12 128Z" fill="#bd3b37"/>
-  <path d="M0 -112C60 -112 100 -74 100 -14C100 44 56 96 7 116H-7C-56 96 -100 44 -100 -14C-100 -74 -60 -112 0 -112Z" fill="url(#bn)"/>
-  <ellipse cx="18" cy="62" rx="52" ry="40" fill="url(#ssp)"/>
-  <ellipse cx="-44" cy="-56" rx="26" ry="44" transform="rotate(-28 -44 -56)" fill="url(#glo)"/>
-  <ellipse cx="-56" cy="-76" rx="7" ry="11" transform="rotate(-28 -56 -76)" fill="#fff" opacity=".55"/>
-      <g transform="translate(-30 -60) scale(.6)" fill="none" stroke="#FFF7EC" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"><path d="M10 0 V100 M70 0 L10 60 M31 40 L72 100"/></g>
-    </g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Karma Play">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#2a1f8c"/>
+      <stop offset="55%" stop-color="#120c46"/>
+      <stop offset="100%" stop-color="#07071a"/>
+    </radialGradient>
+    <radialGradient id="ball" cx="36%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".9"/>
+      <stop offset="28%" stop-color="#7eb6ff"/>
+      <stop offset="100%" stop-color="#3d6dff"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <ellipse cx="268" cy="390" rx="78" ry="18" fill="#000" opacity=".22"/>
+  <path d="M256 88c72 0 124 56 124 128 0 78-48 132-124 136-76-4-124-58-124-136 0-72 52-128 124-128z" fill="url(#ball)"/>
+  <ellipse cx="210" cy="160" rx="34" ry="48" fill="#fff" opacity=".55"/>
+  <ellipse cx="198" cy="148" rx="10" ry="16" fill="#fff" opacity=".95" transform="rotate(-18 198 148)"/>
+  <path d="M236 348q20-12 40 0l-12 22q-8 8-16 0z" fill="#3d6dff"/>
+  <ellipse cx="256" cy="368" rx="12" ry="9" fill="#3d6dff"/>
+  <path d="M256 376q-18 24 -4 42 t-8 36" fill="none" stroke="#8eb6ff" stroke-width="8" stroke-linecap="round" opacity=".7"/>
+</svg>

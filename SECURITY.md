@@ -6,8 +6,8 @@
 - No personal data is collected or transmitted by the game.
 
 ## What is public (intentional)
-This repository is public so people can view the work; the game itself is served by
-Cloudflare Pages at karmaplay.francobernal.ca. Public does **not** mean free to copy or re-host as your product
+This repository is public so the free game can run on GitHub Pages and people can
+view the work. Public does **not** mean free to copy or re-host as your product
 (see LICENSE). Public surface should contain **only**:
 - Game HTML/CSS/JS and static assets (icons, OG image, manifest, service worker)
 - License, README, this file, migration notes
@@ -21,18 +21,15 @@ Cloudflare Pages at karmaplay.francobernal.ca. Public does **not** mean free to 
 - Git history that ever held secrets (rotate + rewrite if that ever happens)
 
 ## Headers & deploy hardening
-- Cloudflare Pages builds `bash scripts/build-public.sh`, which publishes only what
-  `.publicfiles` names. docs/, tools/, lab/ and scripts/ never ship.
-- `_headers` sends a strict Content-Security-Policy: `script-src 'self'` and
-  `style-src 'self'` with no `'unsafe-inline'` (the game is ES modules plus one
-  stylesheet), `connect-src 'self'`, no third-party origins at all. The meta CSP in
-  `index.html` mirrors it.
-- `frame-ancestors` allows only francobernal.ca, which embeds the game. There is
-  deliberately no X-Frame-Options header (see the note in `_headers`).
-- The service worker caches same-origin files only.
-- No external CDNs, fonts, analytics or trackers. The font is self-hosted (OFL).
+GitHub Pages does not support custom `_headers` the way Cloudflare Pages does.
+This game still hardens via:
+- Content-Security-Policy meta (no third-party scripts/connect)
+- `referrer: no-referrer`
+- Service worker that only caches same-origin assets
+- No external CDNs, fonts, or analytics
 
-ose `.git`, env, or source maps.
+When moving to **Cloudflare Pages** (private product path), use the headers in
+`docs/CLOUDFLARE.md` so deploys never expose `.git`, env, or source maps.
 
 ## Reporting
 If you find a security issue in the public game, contact Franco via

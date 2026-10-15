@@ -11,17 +11,28 @@ while staying free to play forever.
 ## Recommended setup
 1. Make the GitHub repo **private** (or move to a new private repo).
 2. Create a Cloudflare Pages project from that private repo (or direct upload / wrangler).
-3. Publish only the allowlisted files: `bash scripts/build-public.sh` copies what `.publicfiles`
-   names into `_site/`, and nothing else.
+3. Publish only the static root (this folder's playable files):
+   - `index.html`, `sw.js`, `manifest.webmanifest`, `icon.svg`, `og-card.jpg`, `robots.txt`
+   - Optional: keep `LICENSE` visible on the free host; omit internal docs from publish if you prefer.
 4. Attach a free hostname, e.g. `play.francobernal.ca` or `karmaplay.pages.dev`.
 5. On francobernal.ca, change the play link to the Cloudflare URL (301/redirect or href update).
 6. Disable or archive the public github.io site so there is one canonical free URL.
 
-## Headers
-The live site already runs on Cloudflare Pages. The headers it sends are in the repo's
-`_headers` file, which is the only source of truth. Do not copy an older sample here:
-the game must keep `frame-ancestors 'self' https://francobernal.ca https://www.francobernal.ca`
-and must not send X-Frame-Options, or the francobernal.ca portal goes blank.
+## Cloudflare `_headers` (put at site root on Pages)
+```
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), microphone=(), payment=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; media-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+
+/*.map
+  X-Robots-Tag: noindex
+  Cache-Control: no-store
+```
 
 ## Cloudflare `_redirects` (optional)
 ```
@@ -35,17 +46,9 @@ and must not send X-Frame-Options, or the francobernal.ca portal goes blank.
 - After making the repo private, rotate any token that ever lived in git history (should be none).
 - Re-check live response headers and that `/.git` returns 404.
 
-## Current host
-Live: `https://karmaplay.francobernal.ca` on Cloudflare Pages, built from `main` with
-`bash scripts/build-public.sh` into `_site/`. The repo stays public for portfolio view only
-(proprietary, see LICENSE).
-
-## Web Analytics must stay off
-Production (2026-10-15) has Cloudflare Web Analytics switched on for this Pages project:
-Cloudflare injects `static.cloudflareinsights.com/beacon.min.js` into every HTML response.
-The CSP blocks it, so nothing is collected, but every visit logs a CSP error in the console
-and the injection contradicts the no-analytics promise. Turn it off in the Pages project
-(Metrics, Web Analytics). Do not "fix" the error by allowing the beacon in the CSP.
+## GitHub Pages (current)
+Live: `https://francobernalca.github.io/karma-play/`
+Source branch: `main` root. Public for free play + portfolio view only (proprietary).
 
 ## Checklist before flipping private
 - [ ] Cloudflare project live and tested on phone + cheap tablet

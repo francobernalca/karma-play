@@ -1,18 +1,16 @@
 # Public surface allowlist for karma-play.
-# docs/, tools/, lab/ and scripts/ are deliberately absent: deployment notes,
-# build tools and the art and physics labs do not belong on a site for toddlers.
-# voice/ (the v1 clips) stays published and untouched: it is cached immutable for
-# a year and old installs may still ask for it. The game itself uses voice2/.
+# docs/ and tools/ are deliberately absent. docs/CLOUDFLARE.md is deployment
+# documentation and tools/ holds build scripts; neither belongs on a website
+# aimed at toddlers, and both were being published only because the old deploy
+# shipped the whole repository root.
 
 index.html
 _headers
 404.html
 robots.txt
 icon.svg
+og-card.jpg
+intro.mp4
 manifest.webmanifest
 sw.js
-styles.css
-js
-assets
 voice
-voice2
