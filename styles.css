@@ -113,10 +113,10 @@
 
 .amb-orbit { left: -10%; width: calc(8 * 1vmin); width: calc(8 * 1cqmin); opacity: .85; animation: kp-glide var(--dur, 80s) linear infinite; animation-delay: -30s; }
 
-.amb-flutter { width: calc(6 * 1vmin); width: calc(6 * 1cqmin); animation: kp-wander 16s ease-in-out infinite alternate; }
+.amb-flutter { width: calc(9.5 * 1vmin); width: calc(9.5 * 1cqmin); animation: kp-wander 16s ease-in-out infinite alternate; }
 .amb-flutter.alt { animation-duration: 19s; animation-delay: -7s; }
 .amb-flutter .wing { transform-box: view-box; transform-origin: 50% 50%; animation: kp-flap .7s ease-in-out infinite alternate; }
-@keyframes kp-flap { to { transform: scaleX(.38); } }
+@keyframes kp-flap { to { transform: scaleX(.6); } }
 @keyframes kp-wander {
   0% { transform: translate(0, 0); }
   33% { transform: translate(6vmin, -5vmin); transform: translate(6cqmin, -5cqmin); }
@@ -205,6 +205,17 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--ink); outline-o
 .ring { position: absolute; inset: -5px; width: calc(100% + 10px); height: calc(100% + 10px); transform: rotate(-90deg); pointer-events: none; overflow: visible; }
 .ring circle { fill: none; stroke: var(--ring, var(--accent)); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset .2s ease; }
 .holding .ring circle { stroke-dashoffset: 0; transition: stroke-dashoffset var(--hold, 1s) linear; }
+/* a quick tap on a hold button tells the grown-up what it wants */
+.hold[data-hint]::after {
+  content: attr(data-hint); position: absolute; top: calc(100% + 10px); left: 0; white-space: nowrap;
+  padding: 7px 13px; border-radius: 999px; background: var(--cream); color: var(--ink);
+  font-size: 15px; font-weight: 700; line-height: 1.2; box-shadow: 0 6px 16px rgba(42, 39, 64, .16);
+  opacity: 0; transform: translateY(-4px); transition: opacity .2s ease, transform .2s ease; pointer-events: none;
+}
+.lock[data-hint]::after { left: auto; right: 0; }
+.hold.hint::after { opacity: 1; transform: none; }
+/* a slow first visit: the sky, the wordmark and Play, never empty buttons */
+html:not(.ready) .round-btn, html:not(.ready) .lock { visibility: hidden; }
 
 /* welcome */
 .welcome {

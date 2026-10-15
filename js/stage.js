@@ -37,13 +37,24 @@ export function inkOnCream(c) {
 }
 
 // Which latex an item rides on.
-export function balloonColorFor(item, pick) {
+export function balloonColorFor(item, pick, world) {
   if (item.kind === 'gold') return GOLD;
   if (item.kind === 'color') return COLORS[item.value].fill;
-  if (item.kind === 'animal') return PASTELS[ANIMAL_BALLOON[item.value]];
-  if (item.kind === 'shape') return PASTELS[Object.keys(PASTELS)[SHAPES.indexOf(item.value) % 6]];
+  if (item.kind === 'animal' || item.kind === 'shape') {
+    const p = item.kind === 'animal' ? ANIMAL_BALLOON[item.value] : Object.keys(PASTELS)[SHAPES.indexOf(item.value) % 6];
+    return PASTELS[(PASTEL_SWAP[world] || {})[p] || p];
+  }
   return COLORS[pick || 'red'].fill;
 }
+
+// A pastel too close to a world's own sky (CIELAB distance under 25 to any sky stop) trades
+// places with one that stands clear of it (28 or more), so the target never melts into the sky.
+const PASTEL_SWAP = {
+  dino: { peach: 'sky', butter: 'lilac', rose: 'mint' },
+  cars: { sky: 'butter', mint: 'peach', lilac: 'rose' },
+  robot: { sky: 'butter', lilac: 'peach', rose: 'mint' },
+  fantasy: { lilac: 'mint', rose: 'butter', sky: 'peach' },
+};
 
 export class Stage {
   constructor(canvas, { onPop = () => {}, onLeave = () => {}, onMiss = () => {} } = {}) {
@@ -111,10 +122,31 @@ export class Stage {
     const r = this.cv.getBoundingClientRect();
     if (!r.width || !r.height) return;
     this.rect = r;
+    const ow = this.w, oh = this.h;
     this.w = r.width; this.h = r.height;
     // At least 2 cm wide on a phone (76 CSS px), larger on big screens, never crowding.
     this.R = clamp(Math.min(this.w * 0.12, this.h * 0.085) + 2, 40, 66);
     this._applyK();
+    if (ow && oh && (ow !== this.w || oh !== this.h)) this._remap(ow, oh);
+  }
+
+  // A turned phone or a resized window: carry every balloon to the same relative place,
+  // so a Find candidate never hovers off screen where no finger can reach it.
+  _remap(ow, oh) {
+    const sx = this.w / ow, sy = this.h / oh;
+    for (const b of this.balloons) {
+      const side = b.R * 1.15;
+      const x0 = clamp(b.x0 * sx, side, Math.max(side, this.w - side));
+      b.x += x0 - b.x0; b.x0 = x0;
+      b.y *= sy;
+      if (b.hoverY != null) {
+        const lo = this.insetTop + b.R * 1.4, hi = Math.max(lo, this.h - this.insetBottom - b.R * 1.6);
+        b.hoverY = clamp(b.hoverY * sy, lo, hi);
+      }
+      b.str = this._newString(b);
+    }
+    for (const f of this.floaters) { f.x *= sx; f.y *= sy; }
+    this._focused = null;
   }
 
   _applyK() {

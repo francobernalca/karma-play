@@ -47,7 +47,7 @@ spec.loader.exec_module(gv)
 V1_KEEP = {k: v for k, v in gv.build_words().items()
            if k[0] in "LNACS" or k in (
                "Pletsplay", "Pdino", "Pcars", "Pocean", "Probot", "Pspace", "Pfantasy",
-               "Pfind", "Pgreatjob", "Pyay", "Psuper", "Pwow", "Pamazing", "Pgold")}
+               "Pfind", "Pgreatjob", "Pyay", "Psuper", "Pwow", "Pamazing", "Pgold", "Ptapme")}
 V2_NEW = gv.build_words_v2()
 
 

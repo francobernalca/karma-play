@@ -152,7 +152,7 @@ function boot() {
   for (const el of document.querySelectorAll('[data-ring]')) {
     el.insertAdjacentHTML('beforeend', '<svg class="ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="46" pathLength="100"/></svg>');
   }
-  $('wordmark').insertAdjacentHTML('beforeend', A.wordmarkSVG({ attrs: 'aria-hidden="true" focusable="false"' }));
+  if (!$('wordmark').querySelector('svg')) $('wordmark').insertAdjacentHTML('beforeend', A.wordmarkSVG({ attrs: 'aria-hidden="true" focusable="false"' }));
   $('tiles').innerHTML = A.WORLD_IDS.map(w => `<button class="tile" type="button" data-world="${w}" aria-label="${A.WORLDS[w].name} World">
       <span class="tile-art">${A.tileSVG(w)}</span><span class="tile-name">${A.wordSVG(A.WORLDS[w].name)}</span></button>`).join('');
   $('doneWord').innerHTML = A.wordSVG('All done');
@@ -220,6 +220,7 @@ function startRound(world) {
     golden: S.rounds === 0 || Math.random() < 0.35 ? 2 + rnd(n - 3) : -1, goldenDone: false,
     stickers: [], found: [], lastKey: null, recent: [], colors: [],
     stage: stageFor(S.seen), lastSpawn: -1e9, warm: 3, started: now(), visibleMs: 0, visSince: now(),
+    hints: 0, hintAt: now() + 5500, hinted: null,
   };
   closeSheet();
   showScene(world);
@@ -278,19 +279,36 @@ function nextItem() {
 }
 
 function spawnFree(t) {
-  if (R.popped === R.golden && !R.goldenDone) {
+  // ">=" not "===": pops during a Find moment, or while the sky is full, can step past the
+  // exact count, and the golden balloon must still come.
+  if (R.golden >= 0 && R.popped >= R.golden && !R.goldenDone) {
     R.goldenDone = true;
     stage.spawn({ item: GOLD_ITEM, color: A.GOLD, golden: true });
   } else {
     const it = nextItem();
-    stage.spawn({ item: it, color: balloonColorFor(it, it.colorName) });
+    stage.spawn({ item: it, color: balloonColorFor(it, it.colorName, R.world) });
   }
   R.lastSpawn = t;
+}
+
+// Before the first pop of a round, a child who only watches hears "Tap me!" and sees the
+// lowest balloon wiggle, twice at most (the cue live Karma Play had for a first game).
+function tapHint(t) {
+  if (R.popped > 0 || R.hints >= 2 || t < R.hintAt || sound.busy()) return;
+  const low = stage.balloons.filter(b => b.state === 'rise' && b.y < stage.h - b.R * 1.2 && b.y > stage.insetTop + b.R)
+    .sort((a, b) => b.y - a.y)[0];
+  if (!low) return;
+  R.hints++;
+  R.hintAt = t + 8000;
+  R.hinted = low;
+  stage.setWobble(low, true);
+  sound.say(['Ptapme'], 'prompt');
 }
 
 function roundTick(t) {
   if (!R || R.ending || paused || !stageReady) return;
   if (R.find) return findTick(t);
+  tapHint(t);
   const gap = R.warm > 0 ? 520 : 1150 + rnd(450);
   if (stage.count() < stage.maxBalloons && t - R.lastSpawn > gap) {
     spawnFree(t);
@@ -301,6 +319,7 @@ function roundTick(t) {
 function onPop(b) {
   if (screen === 'welcome') { sound.pop((b.x / stage.w) * 2 - 1); return; }
   if (!R || (screen !== 'game' && screen !== 'done') || R.ending) return;
+  if (R.hinted) { stage.setWobble(R.hinted, false); R.hinted = null; }
   sound.pop((b.x / stage.w) * 2 - 1, b.golden);
   buzz();
   if (b.golden) {
@@ -389,7 +408,7 @@ function startFind() {
   const rows = [top + (bottom - top) * 0.36, top + (bottom - top) * 0.7];
   const cands = items.map((it, i) => {
     const x = side + (items.length === 1 ? span / 2 : (span * i) / (items.length - 1));
-    const b = stage.spawn({ item: it, color: balloonColorFor(it, it.colorName), x, hoverY: rows[i % 2] + (Math.random() - 0.5) * stage.R * 0.3, target: it.key === target.key, speed: Math.max(90, stage.h / 6) });
+    const b = stage.spawn({ item: it, color: balloonColorFor(it, it.colorName, R.world), x, hoverY: rows[i % 2] + (Math.random() - 0.5) * stage.R * 0.3, target: it.key === target.key, speed: Math.max(90, stage.h / 6) });
     b.candidate = true;
     return b;
   });
@@ -423,6 +442,7 @@ function sayAgain() {
   if (!R) return;
   if (R.find) { R.find.idleAt = now(); sound.say(promptKeys(R.find.item), 'prompt'); }
   else if (R.lastKey) sound.say([R.lastKey], 'keep');
+  else sound.say(['Ptapme'], 'prompt');
 }
 $('againBtn').addEventListener('click', sayAgain);
 
@@ -440,7 +460,10 @@ function earnSticker() {
   if (!owned.has(id)) S.stickers.push(id);
   R.stickers.push(id);
   sound.chime('sticker');
-  sound.say(['Pgold'], 'praise');
+  // Name what was earned: "Wow! Lion!" for an animal, "Wow! Dino World!" for a hero.
+  const [kind, name] = id.split(':');
+  const heroWorld = Object.keys(WORLD_HERO).find(w => WORLD_HERO[w] === id);
+  sound.say(['Pwow', kind === 'a' ? 'A' + name : heroWorld ? 'P' + heroWorld : 'Pamazing'], 'praise');
   announce(`Sticker: ${A.stickerLabel(id)}`);
   const pop = $('stickerPop');
   pop.innerHTML = A.stickerSVG(id, 'focusable="false"');
@@ -489,7 +512,8 @@ function endRound() {
   S.rounds++;
   S.playedMs += playedNow();
   writeState();
-  setTimeout(() => sound.say([CLIPS.Palldone ? 'Palldone' : 'Pgreatjob'], 'praise'), 500);
+  const ended = R;
+  setTimeout(() => { if (R === ended) sound.say([CLIPS.Palldone ? 'Palldone' : 'Pgreatjob'], 'praise'); }, 500);
   setTimeout(() => {
     if (!R || !R.ending) return;
     if (limitReached()) { go('rest'); return; }
@@ -535,14 +559,21 @@ function limitReached() {
 /* ------------------------------------------------------------------ hold buttons */
 
 function holdButton(btn, ms, done) {
-  let timer = 0;
+  let timer = 0, t0 = 0, hintT = 0;
   btn.style.setProperty('--hold', ms + 'ms');
   const start = () => {
     if (timer) return;
+    t0 = now();
     btn.classList.add('holding');
+    btn.classList.remove('hint');
     timer = setTimeout(() => { timer = 0; btn.classList.remove('holding'); done(); }, ms);
   };
-  const cancel = () => { if (!timer) return; clearTimeout(timer); timer = 0; btn.classList.remove('holding'); };
+  const cancel = () => {
+    if (!timer) return;
+    clearTimeout(timer); timer = 0; btn.classList.remove('holding');
+    // A quick tap: show the grown-up the hold hint for a moment.
+    if (now() - t0 < ms * 0.6) { btn.classList.add('hint'); clearTimeout(hintT); hintT = setTimeout(() => btn.classList.remove('hint'), 1800); }
+  };
   btn.addEventListener('pointerdown', e => { if (e.button > 0) return; e.preventDefault(); start(); });
   for (const ev of ['pointerup', 'pointerleave', 'pointercancel', 'blur']) btn.addEventListener(ev, cancel);
   btn.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) { e.preventDefault(); start(); } });

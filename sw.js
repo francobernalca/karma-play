@@ -4,11 +4,11 @@
    reaches players on the next visit; voice and /assets are immutable, so cache-first. */
 'use strict';
 
-const CACHE = 'karma-play-v3.0.0';
+const CACHE = 'karma-play-v3.1.0';
 const SHELL = [
   './',
   './index.html',
-  './styles.css?v=3',
+  './styles.css?v=4',
   './manifest.webmanifest',
   './icon.svg',
   './js/game.js',

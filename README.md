@@ -22,8 +22,11 @@ picture, balloon and voice clip then works without a connection.
 - **Find moments:** every third or fourth pop the voice asks for one thing ("Find it! B!")
   while two to four candidates float. After 6 seconds idle the target wobbles and the
   question repeats. Popping another balloon still pops: the voice names it and asks again.
-- **Stickers:** a rare golden balloon gives a sticker (the world's hero or an animal)
-  for the sticker book.
+- **First taps:** if a child only watches, the voice says "Tap me!" and the lowest
+  balloon wiggles, twice at most, until the first pop.
+- **Stickers:** a golden balloon (about one round in three, always in the first) gives a
+  sticker for the sticker book, the world's hero or an animal, and the voice names it.
+- **Turn the phone any time:** every balloon keeps its place on the new screen shape.
 - **A natural stopping point:** the round ends by itself, the balloons float away, and
   the next round never starts on its own.
 - **What comes first:** A to H, 1 to 4 and five animals. The set widens as the child

@@ -32,9 +32,13 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/icons/karma-play-180-2.png">
 <link rel="preload" href="assets/fonts/manrope-kp1.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 <link rel="modulepreload" href="js/art.js">
 <link rel="modulepreload" href="js/stage.js">
+<link rel="modulepreload" href="js/scene.js">
+<link rel="modulepreload" href="js/audio.js">
+<link rel="modulepreload" href="js/content.js">
+<link rel="modulepreload" href="js/voice-pack.js">
 <script type="module" src="js/game.js"></script>
 </head>
 <body>
@@ -45,8 +49,14 @@
   <div class="dim" id="dim" aria-hidden="true"></div>
 
   <main class="screen welcome on" id="welcome" aria-labelledby="wordmark">
-    <h1 class="wordmark" id="wordmark"><span class="vh">Karma Play</span></h1>
-    <button class="play" id="play" type="button" aria-label="Play"><span class="play-face" data-icon="play"></span></button>
+    <!-- The wordmark and the Play triangle are in the page itself (rendered from art.js wordmarkSVG(), ids prefixed wm-), so a slow first visit shows them before the scripts arrive. -->
+    <h1 class="wordmark" id="wordmark"><span class="vh">Karma Play</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -113 786 255" aria-hidden="true" focusable="false"><defs><radialGradient id="wm-b1" cx="0.3" cy="0.24" r="0.95"><stop offset="0" stop-color="#eb817a" stop-opacity="1"/><stop offset="0.35" stop-color="#e4524a" stop-opacity="1"/><stop offset="0.78" stop-color="#E2453C" stop-opacity="1"/><stop offset="1" stop-color="#a83634" stop-opacity="1"/></radialGradient><radialGradient id="wm-gl2" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#fff" stop-opacity="0.55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="wm-ss3" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#eb7d77" stop-opacity="0.45"/><stop offset="1" stop-color="#eb7d77" stop-opacity="0"/></radialGradient></defs><path d="M582 -4 C582 -20 595.2 -23.8 601.2 -41.8" fill="none" stroke="#2A2740" stroke-width="3.4" stroke-linecap="round"/><g fill="none" stroke="#2A2740" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"><path transform="translate(0 0)" d="M10 0 V100 M70 0 L10 60 M31 40 L72 100"/><path transform="translate(91 0)" d="M4 70 A30 30 0 1 1 64 70 A30 30 0 1 1 4 70 Z M64 40 V100"/><path transform="translate(178 0)" d="M10 40 V100 M10 68 C10 50 24 41 46 43"/><path transform="translate(245 0)" d="M10 100 V40 M10 64 A22 24 0 0 1 54 64 V100 M54 64 A22 24 0 0 1 98 64 V100"/><path transform="translate(368 0)" d="M4 70 A30 30 0 1 1 64 70 A30 30 0 1 1 4 70 Z M64 40 V100"/><path transform="translate(485 0)" d="M10 100 V0 H38 A26 26 0 0 1 38 52 H10"/><path transform="translate(572 0)" d="M10 0 V100"/><path transform="translate(607 0)" d="M4 70 A30 30 0 1 1 64 70 A30 30 0 1 1 4 70 Z M64 40 V100"/><path transform="translate(694 0)" d="M6 40 L37 100 M66 40 L24 128"/></g><g transform="translate(606 -76) rotate(8) scale(0.27)">
+  <path d="M-8 115H8L12 128Q0 124 -12 128Z" fill="#bd3b37"/>
+  <path d="M0 -112C60 -112 100 -74 100 -14C100 44 56 96 7 116H-7C-56 96 -100 44 -100 -14C-100 -74 -60 -112 0 -112Z" fill="url(#wm-b1)"/>
+  <ellipse cx="18" cy="62" rx="52" ry="40" fill="url(#wm-ss3)"/>
+  <ellipse cx="-44" cy="-56" rx="26" ry="44" transform="rotate(-28 -44 -56)" fill="url(#wm-gl2)"/>
+  <ellipse cx="-56" cy="-76" rx="7" ry="11" transform="rotate(-28 -56 -76)" fill="#fff" opacity=".55"/></g></svg></h1>
+    <button class="play" id="play" type="button" aria-label="Play"><span class="play-face"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8.6 6.4 17.8 12l-9.2 5.6z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span></button>
     <button class="round-btn book-btn" id="bookBtn" type="button" aria-label="Sticker book" data-icon="star"><span class="badge" id="bookCount" aria-hidden="true"></span></button>
   </main>
 
@@ -59,7 +69,7 @@
   </section>
 
   <div class="hud" id="hud" hidden>
-    <button class="round-btn hold" id="homeBtn" type="button" aria-label="Home. Press and hold." data-icon="home" data-ring></button>
+    <button class="round-btn hold" id="homeBtn" type="button" aria-label="Home. Press and hold." data-icon="home" data-ring data-hint="Hold to go home"></button>
     <div class="progress" id="progress" role="progressbar" aria-label="Balloons popped" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"></div>
     <button class="round-btn" id="againBtn" type="button" aria-label="Say it again" data-icon="speaker"></button>
   </div>
@@ -84,7 +94,7 @@
     </div>
   </section>
 
-  <button class="lock hold" id="lockBtn" type="button" aria-label="Grown-ups: press and hold for two seconds" data-icon="lock" data-ring></button>
+  <button class="lock hold" id="lockBtn" type="button" aria-label="Grown-ups: press and hold for two seconds" data-icon="lock" data-ring data-hint="Grown-ups: press and hold"></button>
 
   <div class="sheet-wrap" id="book" role="dialog" aria-modal="true" aria-labelledby="bookTitle" hidden>
     <div class="sheet book">

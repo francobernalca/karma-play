@@ -4,7 +4,7 @@
  "rate": "+12%",
  "pitch": "+10Hz",
  "format": "mp3 mono 24 kHz 48 kbps, silence trimmed to 40 ms, voiced RMS -18 dBFS",
- "count": 82,
+ "count": 83,
  "clips": {
   "Abear": {
    "text": "bear!",
@@ -301,6 +301,10 @@
   "Psuper": {
    "text": "Super!",
    "ms": 530
+  },
+  "Ptapme": {
+   "text": "Tap me!",
+   "ms": 550
   },
   "Pwow": {
    "text": "Wow!",
