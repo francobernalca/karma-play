@@ -40,6 +40,13 @@ Live: `https://karmaplay.francobernal.ca` on Cloudflare Pages, built from `main`
 `bash scripts/build-public.sh` into `_site/`. The repo stays public for portfolio view only
 (proprietary, see LICENSE).
 
+## Web Analytics must stay off
+Production (2026-10-15) has Cloudflare Web Analytics switched on for this Pages project:
+Cloudflare injects `static.cloudflareinsights.com/beacon.min.js` into every HTML response.
+The CSP blocks it, so nothing is collected, but every visit logs a CSP error in the console
+and the injection contradicts the no-analytics promise. Turn it off in the Pages project
+(Metrics, Web Analytics). Do not "fix" the error by allowing the beacon in the CSP.
+
 ## Checklist before flipping private
 - [ ] Cloudflare project live and tested on phone + cheap tablet
 - [ ] francobernal.ca link updated

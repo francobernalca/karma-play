@@ -13,7 +13,8 @@ picture, balloon and voice clip then works without a connection.
 
 ## How it plays
 
-- **Start:** the Karma Play wordmark, three balloons drifting up, one big Play button.
+- **Start:** the Karma Play wordmark, one big Play button and three balloons drifting up
+  with a letter, an animal or a number on them (pop one and the voice names it).
 - **Six worlds:** Dino, Cars, Ocean, Robot, Space and Fantasy, each a layered vector
   scene with slow ambient life. Tapping a world says its name.
 - **A round** is 10 pops (or 6, set by a grown-up). Balloons rise calmly, at most 5 to 7
