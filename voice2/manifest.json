@@ -1,0 +1,338 @@
+{
+ "pack": "v2",
+ "voice": "en-US-JennyNeural",
+ "rate": "+12%",
+ "pitch": "+10Hz",
+ "format": "mp3 mono 24 kHz 48 kbps, silence trimmed to 40 ms, voiced RMS -18 dBFS",
+ "count": 82,
+ "clips": {
+  "Abear": {
+   "text": "bear!",
+   "ms": 415
+  },
+  "Abunny": {
+   "text": "bunny!",
+   "ms": 410
+  },
+  "Acat": {
+   "text": "cat!",
+   "ms": 470
+  },
+  "Achicken": {
+   "text": "chicken!",
+   "ms": 495
+  },
+  "Acow": {
+   "text": "cow!",
+   "ms": 385
+  },
+  "Adog": {
+   "text": "dog!",
+   "ms": 435
+  },
+  "Aduck": {
+   "text": "duck!",
+   "ms": 450
+  },
+  "Aelephant": {
+   "text": "elephant!",
+   "ms": 645
+  },
+  "Afox": {
+   "text": "fox!",
+   "ms": 510
+  },
+  "Afrog": {
+   "text": "frog!",
+   "ms": 495
+  },
+  "Agiraffe": {
+   "text": "giraffe!",
+   "ms": 545
+  },
+  "Ahorse": {
+   "text": "horse!",
+   "ms": 470
+  },
+  "Akoala": {
+   "text": "koala!",
+   "ms": 535
+  },
+  "Alion": {
+   "text": "lion!",
+   "ms": 490
+  },
+  "Amonkey": {
+   "text": "monkey!",
+   "ms": 555
+  },
+  "Apanda": {
+   "text": "panda!",
+   "ms": 490
+  },
+  "Apenguin": {
+   "text": "penguin!",
+   "ms": 570
+  },
+  "Apig": {
+   "text": "pig!",
+   "ms": 385
+  },
+  "Atiger": {
+   "text": "tiger!",
+   "ms": 490
+  },
+  "Azebra": {
+   "text": "zebra!",
+   "ms": 495
+  },
+  "Cblue": {
+   "text": "blue!",
+   "ms": 440
+  },
+  "Cgreen": {
+   "text": "green!",
+   "ms": 460
+  },
+  "Corange": {
+   "text": "orange!",
+   "ms": 530
+  },
+  "Cpurple": {
+   "text": "purple!",
+   "ms": 450
+  },
+  "Cred": {
+   "text": "red!",
+   "ms": 420
+  },
+  "Cyellow": {
+   "text": "yellow!",
+   "ms": 510
+  },
+  "LA": {
+   "text": "A!",
+   "ms": 380
+  },
+  "LB": {
+   "text": "B!",
+   "ms": 345
+  },
+  "LC": {
+   "text": "C!",
+   "ms": 450
+  },
+  "LD": {
+   "text": "D!",
+   "ms": 390
+  },
+  "LE": {
+   "text": "E!",
+   "ms": 355
+  },
+  "LF": {
+   "text": "F!",
+   "ms": 410
+  },
+  "LG": {
+   "text": "G!",
+   "ms": 425
+  },
+  "LH": {
+   "text": "H!",
+   "ms": 480
+  },
+  "LI": {
+   "text": "I!",
+   "ms": 410
+  },
+  "LJ": {
+   "text": "J!",
+   "ms": 420
+  },
+  "LK": {
+   "text": "K!",
+   "ms": 410
+  },
+  "LL": {
+   "text": "L!",
+   "ms": 345
+  },
+  "LM": {
+   "text": "M!",
+   "ms": 395
+  },
+  "LN": {
+   "text": "N!",
+   "ms": 400
+  },
+  "LO": {
+   "text": "O!",
+   "ms": 400
+  },
+  "LP": {
+   "text": "P!",
+   "ms": 385
+  },
+  "LQ": {
+   "text": "Q!",
+   "ms": 445
+  },
+  "LR": {
+   "text": "R!",
+   "ms": 390
+  },
+  "LS": {
+   "text": "S!",
+   "ms": 410
+  },
+  "LT": {
+   "text": "T!",
+   "ms": 410
+  },
+  "LU": {
+   "text": "U!",
+   "ms": 440
+  },
+  "LV": {
+   "text": "V!",
+   "ms": 400
+  },
+  "LW": {
+   "text": "W!",
+   "ms": 590
+  },
+  "LX": {
+   "text": "X!",
+   "ms": 430
+  },
+  "LY": {
+   "text": "Y!",
+   "ms": 405
+  },
+  "LZ": {
+   "text": "Z!",
+   "ms": 420
+  },
+  "N1": {
+   "text": "one!",
+   "ms": 425
+  },
+  "N10": {
+   "text": "ten!",
+   "ms": 435
+  },
+  "N2": {
+   "text": "two!",
+   "ms": 410
+  },
+  "N3": {
+   "text": "three!",
+   "ms": 400
+  },
+  "N4": {
+   "text": "four!",
+   "ms": 485
+  },
+  "N5": {
+   "text": "five!",
+   "ms": 480
+  },
+  "N6": {
+   "text": "six!",
+   "ms": 535
+  },
+  "N7": {
+   "text": "seven!",
+   "ms": 525
+  },
+  "N8": {
+   "text": "eight!",
+   "ms": 425
+  },
+  "N9": {
+   "text": "nine!",
+   "ms": 465
+  },
+  "Pamazing": {
+   "text": "Amazing!",
+   "ms": 630
+  },
+  "Pcars": {
+   "text": "Car World!",
+   "ms": 600
+  },
+  "Pdino": {
+   "text": "Dino World!",
+   "ms": 640
+  },
+  "Pfantasy": {
+   "text": "Fantasy Kingdom!",
+   "ms": 900
+  },
+  "Pfind": {
+   "text": "Find it!",
+   "ms": 570
+  },
+  "Pgold": {
+   "text": "Gold star!",
+   "ms": 665
+  },
+  "Pgreatjob": {
+   "text": "Great job!",
+   "ms": 640
+  },
+  "Pletsplay": {
+   "text": "Let's play!",
+   "ms": 700
+  },
+  "Pocean": {
+   "text": "Ocean World!",
+   "ms": 680
+  },
+  "Probot": {
+   "text": "Robot World!",
+   "ms": 725
+  },
+  "Pspace": {
+   "text": "Space World!",
+   "ms": 770
+  },
+  "Psuper": {
+   "text": "Super!",
+   "ms": 530
+  },
+  "Pwow": {
+   "text": "Wow!",
+   "ms": 410
+  },
+  "Pyay": {
+   "text": "Yay!",
+   "ms": 455
+  },
+  "Scircle": {
+   "text": "circle!",
+   "ms": 545
+  },
+  "Sdiamond": {
+   "text": "diamond!",
+   "ms": 475
+  },
+  "Sheart": {
+   "text": "heart!",
+   "ms": 455
+  },
+  "Ssquare": {
+   "text": "square!",
+   "ms": 555
+  },
+  "Sstar": {
+   "text": "star!",
+   "ms": 490
+  },
+  "Striangle": {
+   "text": "triangle!",
+   "ms": 630
+  }
+ }
+}

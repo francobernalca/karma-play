@@ -1,0 +1,130 @@
+/* Karma Play. One stylesheet, no inline styles (the CSP allows style-src 'self' only). */
+
+@font-face {
+  font-family: "Manrope KP";
+  src: url("assets/fonts/manrope-kp1.woff2") format("woff2");
+  font-weight: 500 800;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------ scene */
+
+.scene { position: absolute; inset: 0; overflow: hidden; container-type: size; contain: strict; }
+.scene .sky { position: absolute; inset: 0; }
+.scene .layer { position: absolute; left: 0; bottom: 0; width: 100%; display: block; }
+.amb { position: absolute; pointer-events: none; will-change: transform; }
+.amb svg { display: block; width: 100%; height: auto; }
+
+.amb-cloud { width: calc(var(--w, 26) * 1vmin); width: calc(var(--w, 26) * 1cqmin); opacity: .72; animation: kp-drift var(--dur, 100s) linear infinite alternate; }
+@keyframes kp-drift { to { transform: translateX(120%); } }
+
+.amb-smoke { width: 0; height: 0; }
+.amb-smoke .puff {
+  position: absolute; left: 0; top: 0; width: calc(90px * var(--s, .5)); height: calc(90px * var(--s, .5));
+  margin: calc(-45px * var(--s, .5)); border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, rgba(240, 222, 206, .85), rgba(226, 200, 184, .55) 60%, rgba(226, 200, 184, 0) 72%);
+  opacity: 0; animation: kp-puff 9s ease-out infinite;
+}
+.amb-smoke .p1 { animation-delay: 3s; }
+.amb-smoke .p2 { animation-delay: 6s; }
+@keyframes kp-puff {
+  0% { opacity: 0; transform: translate(0, 0) scale(.6); }
+  15% { opacity: .9; }
+  100% { opacity: 0; transform: translate(calc(70px * var(--s, .5)), calc(-260px * var(--s, .5))) scale(1.9); }
+}
+
+.amb-glide { left: -12%; width: calc(9 * 1vmin); width: calc(9 * 1cqmin); opacity: .8; animation: kp-glide var(--dur, 70s) linear infinite; animation-delay: -20s; }
+@keyframes kp-glide {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(60vw, -2vmin); transform: translate(60cqw, -3cqmin); }
+  100% { transform: translate(130vw, 1vmin); transform: translate(130cqw, 1cqmin); }
+}
+
+.amb-fern, .amb-weed { bottom: -2%; width: calc(26 * 1vmin); width: calc(26 * 1cqmin); transform-origin: 20% 100%; animation: kp-sway 7s ease-in-out infinite alternate; }
+.amb-weed { width: calc(14 * 1vmin); width: calc(14 * 1cqmin); }
+.amb-fern.bl, .amb-weed.bl { left: -3%; }
+.amb-fern.br, .amb-weed.br { right: -3%; }
+.amb-fern.br svg, .amb-weed.br svg { transform: scaleX(-1); }
+.amb-fern.br, .amb-weed.br { transform-origin: 80% 100%; animation-delay: -3s; }
+@keyframes kp-sway { from { transform: rotate(-2.2deg); } to { transform: rotate(2.2deg); } }
+
+.amb-drive { width: calc(13 * 1vmin); width: calc(13 * 1cqmin); margin-top: calc(-11 * 1vmin); margin-top: calc(-11 * 1cqmin); margin-left: -15%; animation: kp-drive var(--dur, 26s) linear infinite; animation-delay: -8s; }
+@keyframes kp-drive { to { transform: translateX(140vw); transform: translateX(140cqw); } }
+
+.amb-rays { inset: 0; }
+.amb-rays .ray {
+  position: absolute; top: -10%; width: 16%; height: 95%; transform-origin: 50% 0;
+  background: linear-gradient(180deg, rgba(222, 244, 246, .16), rgba(222, 244, 246, 0));
+  clip-path: polygon(30% 0, 70% 0, 100% 100%, 0 100%);
+  animation: kp-ray 14s ease-in-out infinite alternate;
+}
+.amb-rays .r0 { left: 8%; }
+.amb-rays .r1 { left: 34%; width: 10%; animation-delay: -4s; }
+.amb-rays .r2 { left: 58%; width: 18%; animation-delay: -8s; }
+.amb-rays .r3 { left: 82%; width: 9%; animation-delay: -2s; }
+@keyframes kp-ray { from { transform: rotate(-4deg); opacity: .7; } to { transform: rotate(4deg); opacity: 1; } }
+
+.amb-swim { left: -14%; width: calc(10 * 1vmin); width: calc(10 * 1cqmin); animation: kp-swim var(--dur, 48s) linear infinite; animation-delay: -12s; }
+.amb-swim svg { transform: scaleX(-1); }
+@keyframes kp-swim {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(34vw, 2vmin); transform: translate(34cqw, 2cqmin); }
+  50% { transform: translate(66vw, -1vmin); transform: translate(66cqw, -1cqmin); }
+  100% { transform: translate(130vw, 1vmin); transform: translate(130cqw, 1cqmin); }
+}
+
+.amb-bubbles { inset: 0; }
+.amb-bubbles .bub {
+  position: absolute; bottom: -4%; width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid rgba(214, 240, 244, .5); background: rgba(214, 240, 244, .08);
+  animation: kp-bubble 11s linear infinite;
+}
+.amb-bubbles .b0 { left: 12%; animation-delay: -1s; }
+.amb-bubbles .b1 { left: 22%; width: 9px; height: 9px; animation-delay: -6s; animation-duration: 9s; }
+.amb-bubbles .b2 { left: 47%; width: 11px; height: 11px; animation-delay: -3s; animation-duration: 13s; }
+.amb-bubbles .b3 { left: 71%; animation-delay: -8s; }
+.amb-bubbles .b4 { left: 86%; width: 8px; height: 8px; animation-delay: -4s; animation-duration: 10s; }
+.amb-bubbles .b5 { left: 93%; width: 12px; height: 12px; animation-delay: -10s; animation-duration: 12s; }
+@keyframes kp-bubble {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 1; }
+  50% { transform: translate(10px, -50vh); transform: translate(10px, -50cqh); }
+  90% { opacity: .9; }
+  100% { transform: translate(-6px, -100vh); transform: translate(-6px, -100cqh); opacity: 0; }
+}
+
+.amb-hover { width: calc(var(--w, 9) * 1vmin); width: calc(var(--w, 9) * 1cqmin); animation: kp-hover 6s ease-in-out infinite alternate; }
+@keyframes kp-hover { from { transform: translate(0, 0) rotate(-2deg); } to { transform: translate(-3vmin, 2vmin) rotate(2deg); transform: translate(-3cqmin, 2cqmin) rotate(2deg); } }
+
+.amb-gear { bottom: -6%; width: calc(20 * 1vmin); width: calc(20 * 1cqmin); animation: kp-spin 40s linear infinite; }
+.amb-gear.bl { left: -5%; }
+.amb-gear.br { right: -4%; bottom: -3%; animation-direction: reverse; animation-duration: 26s; }
+.amb-gear.small { width: calc(12 * 1vmin); width: calc(12 * 1cqmin); }
+@keyframes kp-spin { to { transform: rotate(360deg); } }
+
+.amb-stars { inset: 0; will-change: auto; }
+.amb-stars .star { position: absolute; width: var(--s); height: var(--s); border-radius: 50%; background: #D8DEF0; opacity: var(--o); }
+.amb-stars .star.tw { animation: kp-twinkle var(--d, 6s) ease-in-out infinite alternate; }
+@keyframes kp-twinkle { to { opacity: calc(var(--o) * .45); } }
+
+.amb-planet { width: calc(var(--w, 34) * 1vmin); width: calc(var(--w, 34) * 1cqmin); animation: kp-float 22s ease-in-out infinite alternate; }
+.amb-moon { width: calc(var(--w, 12) * 1vmin); width: calc(var(--w, 12) * 1cqmin); }
+@keyframes kp-float { to { transform: translateY(2.5vmin); transform: translateY(2.5cqmin); } }
+
+.amb-orbit { left: -10%; width: calc(8 * 1vmin); width: calc(8 * 1cqmin); opacity: .85; animation: kp-glide var(--dur, 80s) linear infinite; animation-delay: -30s; }
+
+.amb-flutter { width: calc(6 * 1vmin); width: calc(6 * 1cqmin); animation: kp-wander 16s ease-in-out infinite alternate; }
+.amb-flutter.alt { animation-duration: 19s; animation-delay: -7s; }
+.amb-flutter .wing { transform-box: view-box; transform-origin: 50% 50%; animation: kp-flap .7s ease-in-out infinite alternate; }
+@keyframes kp-flap { to { transform: scaleX(.38); } }
+@keyframes kp-wander {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(6vmin, -5vmin); transform: translate(6cqmin, -5cqmin); }
+  66% { transform: translate(-3vmin, -9vmin); transform: translate(-3cqmin, -9cqmin); }
+  100% { transform: translate(8vmin, -3vmin); transform: translate(8cqmin, -3cqmin); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .amb, .amb * { animation: none !important; }
+  .amb-smoke, .amb-bubbles { display: none; }
+}

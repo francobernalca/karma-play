@@ -33,3 +33,7 @@ credentials.*
 .cloudflare/
 wrangler.toml.local
 *.local
+
+# Raw TTS output before trim/normalise (tools/voice2-build.py)
+tools/.voice2-raw/
+_site/
