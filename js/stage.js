@@ -50,6 +50,7 @@ export function balloonColorFor(item, pick, world) {
 // A pastel too close to a world's own sky (CIELAB distance under 25 to any sky stop) trades
 // places with one that stands clear of it (28 or more), so the target never melts into the sky.
 const PASTEL_SWAP = {
+  home: { sky: 'butter', mint: 'rose', peach: 'rose' },
   dino: { peach: 'sky', butter: 'lilac', rose: 'mint' },
   cars: { sky: 'butter', mint: 'peach', lilac: 'rose' },
   robot: { sky: 'butter', lilac: 'peach', rose: 'mint' },

@@ -179,14 +179,18 @@ function restArt() {
 
 let lastAmbient = 0, ambientColor = 0;
 const AMBIENT = ['red', 'blue', 'yellow', 'green', 'purple', 'orange'];
+// The welcome balloons already carry what the game is about, and popping one names it.
+const WELCOME_ITEMS = [['letter', 'A'], ['animal', 'dog'], ['number', 2], ['letter', 'B'], ['animal', 'lion'], ['number', 3], ['letter', 'C'], ['animal', 'cat'], ['number', 1]];
 
 function welcomeTick(t) {
   if (stage.count() >= 3 || t - lastAmbient < 2300) return;
   lastAmbient = t;
-  const c = A.COLORS[AMBIENT[ambientColor++ % 6]].fill;
+  const n = ambientColor++, cname = AMBIENT[n % 6];
   const w = stage.w, R = stage.R;
   const x = (stage.count() === 0 ? 0.24 : stage.count() === 1 ? 0.76 : 0.5) * w + (Math.random() - 0.5) * R;
-  stage.spawn({ color: c, x, speed: Math.max(46, stage.h / 13) });
+  const [k, v] = WELCOME_ITEMS[n % WELCOME_ITEMS.length];
+  const it = stageReady || k !== 'animal' ? makeItem(k, v, cname) : null;
+  stage.spawn({ item: it, color: it ? balloonColorFor(it, cname, 'home') : A.COLORS[cname].fill, x, speed: Math.max(46, stage.h / 13) });
 }
 
 $('play').addEventListener('click', () => {
@@ -317,7 +321,7 @@ function roundTick(t) {
 }
 
 function onPop(b) {
-  if (screen === 'welcome') { sound.pop((b.x / stage.w) * 2 - 1); return; }
+  if (screen === 'welcome') { sound.pop((b.x / stage.w) * 2 - 1); if (b.item) { sound.say([b.item.key], 'label'); announce(itemName(b.item)); } return; }
   if (!R || (screen !== 'game' && screen !== 'done') || R.ending) return;
   if (R.hinted) { stage.setWobble(R.hinted, false); R.hinted = null; }
   sound.pop((b.x / stage.w) * 2 - 1, b.golden);
